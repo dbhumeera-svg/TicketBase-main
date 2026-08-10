@@ -38,13 +38,27 @@ data "aws_iam_policy_document" "github_actions_assume" {
       values   = ["sts.amazonaws.com"]
     }
 
-    # Scoped to this exact repo, any branch/PR/tag. Matching on the
-    # `repository` claim rather than parsing `sub` deliberately - GitHub
-    # now embeds numeric owner/repo IDs into `sub`
-    # ("repo:owner@123/repo@456:ref:...") on at least some repos, which
-    # silently breaks a plain "repo:owner/repo:*" StringLike match with
-    # no error, just a permanent AssumeRoleWithWebIdentity rejection.
-    # `repository` stays a clean "owner/repo" string regardless.
+    # Scoped to this exact repo, any branch/PR/tag.
+    #
+    # AWS requires an OIDC trust policy to constrain on `sub` or
+    # `job_workflow_ref` specifically - a policy scoped only by
+    # `repository`/`aud` is rejected outright at apply time
+    # ("...must evaluate...sub or job_workflow_ref which is not scoped
+    # to all"). `sub` isn't usable here though: GitHub embeds numeric
+    # owner/repo IDs into it on this repo
+    # ("repo:owner@123/repo@456:ref:..."), which silently breaks a plain
+    # "repo:owner/repo:*" StringLike match with no error at apply time -
+    # just a permanent, confusing AssumeRoleWithWebIdentity rejection at
+    # workflow run time instead. `job_workflow_ref` stays a clean
+    # "owner/repo/.github/workflows/file@ref" string with no ID
+    # embedding, so it's used to satisfy AWS's requirement, with
+    # `repository` layered on top as a second, simpler check.
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:job_workflow_ref"
+      values   = ["${var.github_repository}/.github/workflows/*"]
+    }
+
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:repository"
