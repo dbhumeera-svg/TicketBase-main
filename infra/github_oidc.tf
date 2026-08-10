@@ -38,12 +38,17 @@ data "aws_iam_policy_document" "github_actions_assume" {
       values   = ["sts.amazonaws.com"]
     }
 
-    # Scoped to this exact repo, any branch/PR/tag - narrow this further
-    # (e.g. ":ref:refs/heads/main") if only main should ever deploy.
+    # Scoped to this exact repo, any branch/PR/tag. Matching on the
+    # `repository` claim rather than parsing `sub` deliberately - GitHub
+    # now embeds numeric owner/repo IDs into `sub`
+    # ("repo:owner@123/repo@456:ref:...") on at least some repos, which
+    # silently breaks a plain "repo:owner/repo:*" StringLike match with
+    # no error, just a permanent AssumeRoleWithWebIdentity rejection.
+    # `repository` stays a clean "owner/repo" string regardless.
     condition {
-      test     = "StringLike"
-      variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:${var.github_repository}:*"]
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:repository"
+      values   = [var.github_repository]
     }
   }
 }
