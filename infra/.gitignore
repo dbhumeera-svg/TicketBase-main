@@ -1,0 +1,9 @@
+# .terraform.lock.hcl is deliberately NOT ignored - commit it, so
+# everyone on the pod gets the exact same provider versions.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+crash.log
+crash.*.log

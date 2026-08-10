@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TicketDesk</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">TD</span>
+        <span class="brand-name">TicketDesk</span>
+      </div>
+
+      <nav class="nav">
+        <a href="#/dashboard" data-route="dashboard">Dashboard</a>
+        <a href="#/tickets" data-route="tickets">Tickets</a>
+        <a href="#/tickets/new" data-route="new">New Ticket</a>
+      </nav>
+
+      <div class="api-config">
+        <label for="api-base-input">API base URL</label>
+        <input id="api-base-input" type="text" spellcheck="false" />
+        <button id="api-base-save" type="button">Save</button>
+        <p id="api-status" class="api-status">Checking…</p>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div id="toast" class="toast" hidden></div>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <template id="tpl-dashboard">
+    <header class="view-header">
+      <h1>Dashboard</h1>
+      <p class="subtitle">Ticket volume at a glance</p>
+    </header>
+
+    <section class="summary-cards">
+      <div class="card card-total">
+        <span class="card-label">Total Tickets</span>
+        <span class="card-value" data-field="total">0</span>
+      </div>
+    </section>
+
+    <section class="breakdown-grid">
+      <div class="panel">
+        <h2>By Status</h2>
+        <div class="bars" data-field="status-bars"></div>
+      </div>
+      <div class="panel">
+        <h2>By Priority</h2>
+        <div class="bars" data-field="priority-bars"></div>
+      </div>
+    </section>
+  </template>
+
+  <template id="tpl-tickets">
+    <header class="view-header">
+      <h1>Tickets</h1>
+      <a href="#/tickets/new" class="btn btn-primary">+ New Ticket</a>
+    </header>
+
+    <section class="filters">
+      <label>
+        Status
+        <select data-filter="status">
+          <option value="">All</option>
+          <option value="OPEN">Open</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="CLOSED">Closed</option>
+        </select>
+      </label>
+
+      <label>
+        Priority
+        <select data-filter="priority">
+          <option value="">All</option>
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+      </label>
+
+      <label>
+        Category
+        <select data-filter="category">
+          <option value="">All</option>
+          <option value="HARDWARE">Hardware</option>
+          <option value="SOFTWARE">Software</option>
+          <option value="NETWORK">Network</option>
+          <option value="ACCESS">Access</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="table-wrap">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody data-field="ticket-rows">
+          <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </template>
+
+  <template id="tpl-new-ticket">
+    <header class="view-header">
+      <h1>New Ticket</h1>
+    </header>
+
+    <form class="form" data-field="create-form">
+      <label>
+        Title
+        <input type="text" name="title" minlength="3" maxlength="100" required />
+      </label>
+
+      <label>
+        Description
+        <textarea name="description" minlength="5" maxlength="1000" rows="5" required></textarea>
+      </label>
+
+      <div class="form-row">
+        <label>
+          Category
+          <select name="category">
+            <option value="HARDWARE">Hardware</option>
+            <option value="SOFTWARE">Software</option>
+            <option value="NETWORK">Network</option>
+            <option value="ACCESS">Access</option>
+            <option value="OTHER" selected>Other</option>
+          </select>
+        </label>
+
+        <label>
+          Priority
+          <select name="priority">
+            <option value="LOW">Low</option>
+            <option value="MEDIUM" selected>Medium</option>
+            <option value="HIGH">High</option>
+            <option value="CRITICAL">Critical</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Create Ticket</button>
+        <a href="#/tickets" class="btn btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </template>
+
+  <template id="tpl-ticket-detail">
+    <header class="view-header">
+      <a href="#/tickets" class="back-link">&larr; Back to tickets</a>
+    </header>
+
+    <section class="detail-grid">
+      <div class="panel ticket-main">
+        <div class="ticket-title-row">
+          <h1 data-field="title"></h1>
+          <span class="badge" data-field="priority-badge"></span>
+        </div>
+
+        <p class="ticket-meta">
+          #<span data-field="id"></span> ·
+          <span data-field="category"></span> ·
+          created <span data-field="created_at"></span>
+        </p>
+
+        <p class="ticket-description" data-field="description"></p>
+
+        <div class="status-control">
+          <label for="status-select">Status</label>
+          <select id="status-select" data-field="status-select">
+            <option value="OPEN">Open</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="RESOLVED">Resolved</option>
+            <option value="CLOSED">Closed</option>
+          </select>
+        </div>
+
+        <div class="attachment-block">
+          <h2>Attachment</h2>
+          <div data-field="attachment-current"></div>
+          <form data-field="attachment-form">
+            <input type="file" name="file" accept="image/png,image/jpeg,image/gif,application/pdf" required />
+            <button type="submit" class="btn btn-secondary">Upload</button>
+          </form>
+          <p class="hint">PNG, JPEG, GIF or PDF, up to 5MB. One attachment per ticket.</p>
+        </div>
+      </div>
+
+      <div class="panel comments-panel">
+        <h2>Comments</h2>
+        <div class="comments-list" data-field="comments-list"></div>
+
+        <form class="comment-form" data-field="comment-form">
+          <input type="text" name="author" placeholder="Your name" minlength="2" maxlength="50" required />
+          <textarea name="message" placeholder="Add a comment…" minlength="1" maxlength="1000" rows="3" required></textarea>
+          <button type="submit" class="btn btn-primary">Add Comment</button>
+        </form>
+      </div>
+    </section>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
