@@ -221,7 +221,7 @@ def test_add_comment():
     )
 
     comment_payload = {
-        "author": "Anmol",
+        "author": "Bhumeera",
         "message": (
             "The issue was assigned "
             "to the IT team."
@@ -238,7 +238,7 @@ def test_add_comment():
     data = response.json()
 
     assert data["ticket_id"] == 1
-    assert data["author"] == "Anmol"
+    assert data["author"] == "Bhumeera"
     assert "created_at" in data
 
 
@@ -288,7 +288,7 @@ def test_add_comment_to_missing_ticket():
     response = client.post(
         "/api/tickets/999/comments",
         json={
-            "author": "Anmol",
+            "author": "Bhumeera",
             "message": (
                 "Checking the issue."
             ),
