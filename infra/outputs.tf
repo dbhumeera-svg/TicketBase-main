@@ -47,8 +47,20 @@ output "sns_alerts_topic_arn" {
 }
 
 output "github_actions_role_arn" {
-  description = "Set this as the AWS_DEPLOY_ROLE_ARN GitHub Actions repo variable."
+  description = "OIDC role - currently unused (blocked, see NOTES.md). Kept for reference/future use."
   value       = aws_iam_role.github_actions_deploy.arn
+}
+
+output "github_actions_access_key_id" {
+  description = "Set this as the AWS_ACCESS_KEY_ID GitHub Actions secret."
+  value       = aws_iam_access_key.github_actions_deploy.id
+  sensitive   = true
+}
+
+output "github_actions_secret_access_key" {
+  description = "Set this as the AWS_SECRET_ACCESS_KEY GitHub Actions secret. Terraform only ever shows this on request (-raw) - it isn't printed by a plain `terraform output`."
+  value       = aws_iam_access_key.github_actions_deploy.secret
+  sensitive   = true
 }
 
 output "attachments_bucket" {

@@ -41,15 +41,20 @@ hypothesis is another account-level hold - plausibly an anti-fraud
 restriction on OIDC federation for new/free-tier accounts - rather than
 anything fixable in Terraform.
 
-**Action taken:** AWS Support case filed (Account and Billing support),
-same as the CloudFront resolution. Once resolved, the pipeline should
-work with no further code changes - `terraform apply` + a push to `main`
-should just go green.
+**Action taken:** AWS Support isn't reliably usable in this environment
+(sandbox/free-tier constraints), so rather than leave the pipeline
+blocked indefinitely, `deploy.yml` now authenticates with a scoped IAM
+user access key (`infra/github_actions_iam_user.tf`) instead of OIDC -
+same exact permission scope as the OIDC role, just a long-lived
+credential stored as a GitHub *secret* rather than a short-lived
+federated token. Free Tier: costs nothing either way. The OIDC role and
+provider are still deployed, unused, ready to switch back to (the
+commented-out block is right there in `deploy.yml`) if the account
+restriction ever turns out to be liftable.
 
-**What still demonstrates M6 in the meantime:** the full pipeline design
-(test -> secret-scan -> build -> deploy -> smoke-test, each gating the
-next) is implemented and the `test`/`secret-scan` jobs run and pass on
-every push - only the AWS-authenticated jobs are blocked.
+This is a deliberate, documented substitution for an environment
+constraint - not the preferred pattern, and worth saying so on demo day
+rather than presenting it as the original design.
 
 ## Everything else - status
 

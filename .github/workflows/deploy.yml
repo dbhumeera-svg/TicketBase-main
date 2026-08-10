@@ -7,14 +7,22 @@ name: TicketDesk Deploy
 #
 # One-time setup (see infra/README.md for how to get these values):
 #   Repo variables (Settings -> Secrets and variables -> Actions -> Variables):
-#     AWS_DEPLOY_ROLE_ARN  - infra output: github_actions_role_arn
 #     AWS_REGION           - e.g. us-east-1
 #     ECR_REPOSITORY_URL   - infra output: ecr_repository_url
 #     ECS_CLUSTER          - infra output: ecs_cluster_name
 #     ECS_SERVICE          - infra output: ecs_service_name
 #     APP_URL              - infra output: frontend_url (or alb_dns_name)
-# No AWS access keys anywhere in this repo or in GitHub Secrets - auth is
-# short-lived, federated via OIDC (Q4's correct answer).
+#   Repo secrets (Settings -> Secrets and variables -> Actions -> Secrets):
+#     AWS_ACCESS_KEY_ID     - infra output: github_actions_access_key_id
+#     AWS_SECRET_ACCESS_KEY - infra output: github_actions_secret_access_key
+#
+# Using a long-lived IAM user access key here, not OIDC federation - the
+# OIDC role (infra/github_oidc.tf) hits an unresolvable AccessDenied on
+# this AWS account/sandbox (see NOTES.md: trust policy verified correct
+# against the actual token, AWS Support unavailable in this environment).
+# Swap back to OIDC (delete the "Configure AWS credentials" step below,
+# uncomment the block after it, add `permissions: id-token: write` to
+# both jobs) if that's ever resolved.
 
 on:
   push:
@@ -73,10 +81,6 @@ jobs:
     needs: [test, secret-scan]
     runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      contents: read
-
     outputs:
       image: ${{ steps.image.outputs.image }}
 
@@ -84,11 +88,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials (OIDC)
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
+
+      # OIDC version (preferred - no long-lived credential in GitHub).
+      # Swap back to this once the account-level AssumeRoleWithWebIdentity
+      # block is resolved (see NOTES.md), and add
+      # `permissions: {id-token: write, contents: read}` to this job.
+      # - name: Configure AWS credentials (OIDC)
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+      #     aws-region: ${{ vars.AWS_REGION }}
 
       - name: Log in to ECR
         id: ecr-login
@@ -108,16 +123,20 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
-      - name: Configure AWS credentials (OIDC)
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
+
+      # OIDC version - see the comment in build-and-push above.
+      # - name: Configure AWS credentials (OIDC)
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+      #     aws-region: ${{ vars.AWS_REGION }}
 
       - name: Fetch current task definition
         run: |

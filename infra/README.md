@@ -172,21 +172,33 @@ through.
 ## Wiring up CI/CD (M6)
 
 `.github/workflows/deploy.yml` needs these set as GitHub **repo
-variables** (Settings → Secrets and variables → Actions → Variables —
-these are plain variables, not secrets; nothing sensitive is in them):
+variables** (Settings → Secrets and variables → Actions → **Variables**
+tab — plain variables, not secrets; nothing sensitive is in them):
 
 | Variable | Value |
 |---|---|
-| `AWS_DEPLOY_ROLE_ARN` | `terraform output -raw github_actions_role_arn` |
 | `AWS_REGION` | your `aws_region` |
 | `ECR_REPOSITORY_URL` | `terraform output -raw ecr_repository_url` |
 | `ECS_CLUSTER` | `terraform output -raw ecs_cluster_name` |
 | `ECS_SERVICE` | `terraform output -raw ecs_service_name` |
 | `APP_URL` | `terraform output -raw frontend_url` |
 
-No AWS access keys go into GitHub at all — the workflow federates via the
-OIDC role `github_oidc.tf` creates. Push to `main` and the pipeline
-builds, tests, secret-scans, pushes to ECR, deploys, and smoke-tests
+And these as GitHub **repo secrets** (same page, **Secrets** tab instead
+— these values are real credentials, never put them in Variables):
+
+| Secret | Value |
+|---|---|
+| `AWS_ACCESS_KEY_ID` | `terraform output -raw github_actions_access_key_id` |
+| `AWS_SECRET_ACCESS_KEY` | `terraform output -raw github_actions_secret_access_key` |
+
+**Why a secret and not OIDC:** the OIDC role (`github_oidc.tf`) is fully
+built and its trust policy has been verified correct against real GitHub
+tokens, but `sts:AssumeRoleWithWebIdentity` fails with an unresolvable
+`AccessDenied` on this account/sandbox, and AWS Support isn't reliably
+available here to chase it further — see `NOTES.md` for the full
+diagnosis. Using a scoped access key instead is a documented,
+deliberate substitution, not the original design. Push to `main` and the
+pipeline builds, tests, secret-scans, pushes to ECR, deploys, and smoke-tests
 automatically. The Lambda thumbnailer image isn't wired into the pipeline
 yet — repeat steps 6-7 by hand when `lambda/thumbnail/` changes.
 
