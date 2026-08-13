@@ -95,6 +95,10 @@ data "aws_iam_policy_document" "github_actions_deploy" {
       "ecr:UploadLayerPart",
       "ecr:CompleteLayerUpload",
       "ecr:BatchGetImage",
+      # Lets deploy.yml check whether a commit-SHA tag was already pushed
+      # (immutable-tag repos reject re-pushing the same tag on a job
+      # re-run) before deciding whether to build/push again.
+      "ecr:DescribeImages",
     ]
     resources = [
       aws_ecr_repository.app.arn,
@@ -124,8 +128,17 @@ data "aws_iam_policy_document" "github_actions_deploy" {
   }
 
   statement {
-    sid       = "UpdateThumbnailLambda"
-    actions   = ["lambda:UpdateFunctionCode", "lambda:GetFunction"]
+    sid = "UpdateThumbnailLambda"
+    actions = [
+      "lambda:UpdateFunctionCode",
+      "lambda:GetFunction",
+      # `aws lambda wait function-updated` (deploy.yml) polls via
+      # GetFunctionConfiguration specifically - a different action from
+      # GetFunction despite the similar name/response shape, and the one
+      # that was actually missing (confirmed via a real AccessDenied
+      # from this exact role on 2026-08-13).
+      "lambda:GetFunctionConfiguration",
+    ]
     resources = [aws_lambda_function.thumbnail.arn]
   }
 }

@@ -143,6 +143,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Fails fast with a clear message instead of the cryptic Docker
+      # error ("invalid tag ':abc1234'") that shows up otherwise when
+      # these two repo variables (Settings -> Secrets and variables ->
+      # Actions -> Variables) haven't been set yet - infra output:
+      # lambda_thumbnail_ecr_repository_url / lambda_thumbnail_function_name.
+      - name: Verify required repo variables are set
+        run: |
+          missing=0
+          if [ -z "${{ vars.LAMBDA_ECR_REPOSITORY_URL }}" ]; then
+            echo "::error::Repo variable LAMBDA_ECR_REPOSITORY_URL is not set (Settings > Secrets and variables > Actions > Variables). Value: terraform output -raw lambda_thumbnail_ecr_repository_url"
+            missing=1
+          fi
+          if [ -z "${{ vars.LAMBDA_FUNCTION_NAME }}" ]; then
+            echo "::error::Repo variable LAMBDA_FUNCTION_NAME is not set (Settings > Secrets and variables > Actions > Variables). Value: terraform output -raw lambda_thumbnail_function_name"
+            missing=1
+          fi
+          if [ "$missing" = "1" ]; then
+            exit 1
+          fi
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -160,14 +180,34 @@ jobs:
       - name: Log in to ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      # ECR has image-tag immutability on (by design - see infra), so a
+      # re-run of this job for the same commit (e.g. retrying only this
+      # job after an earlier partial failure) can't re-push the same
+      # commit-SHA tag - ECR rejects it outright ("tag ... is immutable"),
+      # even though the image content would be identical. Skip the
+      # build/push when that tag is already present instead of failing.
+      - name: Check if image tag already exists in ECR
+        id: check-image
+        env:
+          REPO_URL: ${{ vars.LAMBDA_ECR_REPOSITORY_URL }}
+        run: |
+          TAG="${GITHUB_SHA::7}"
+          REPO_NAME="${REPO_URL##*/}"
+          echo "IMAGE=$REPO_URL:$TAG" >> "$GITHUB_ENV"
+          if aws ecr describe-images --repository-name "$REPO_NAME" --image-ids imageTag="$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build and push thumbnailer image (tagged with the commit SHA)
+        if: steps.check-image.outputs.exists != 'true'
         env:
           REPO_URL: ${{ vars.LAMBDA_ECR_REPOSITORY_URL }}
         run: |
           TAG="${GITHUB_SHA::7}"
           docker build -t "$REPO_URL:$TAG" lambda/thumbnail
           docker push "$REPO_URL:$TAG"
-          echo "IMAGE=$REPO_URL:$TAG" >> "$GITHUB_ENV"
 
       - name: Update Lambda function code and wait for it to finish updating
         run: |
