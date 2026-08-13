@@ -259,6 +259,12 @@
     });
   }
 
+  // Bumped by render() on every route change. Async view functions
+  // capture the value at the top and re-check it after each await -
+  // if it's moved on, the user navigated away while a fetch was in
+  // flight, so the old view's DOM is gone and must not be touched.
+  let currentRenderToken = 0;
+
   // ---------- Sidebar (auth box + notification bell) ----------
 
   let notificationPollTimer = null;
@@ -645,12 +651,14 @@
   // ---------- Dashboard ----------
 
   async function renderDashboard() {
+    const myToken = currentRenderToken;
     setActiveNav("dashboard");
     const node = useTemplate("tpl-dashboard");
     viewEl.replaceChildren(node);
 
     try {
       const data = await api("/tickets/dashboard");
+      if (myToken !== currentRenderToken) return;
 
       viewEl.querySelector('[data-field="total"]').textContent =
         data.total_tickets;
@@ -728,6 +736,7 @@
   }
 
   async function renderTickets() {
+    const myToken = currentRenderToken;
     setActiveNav("tickets");
     const node = useTemplate("tpl-tickets");
     viewEl.replaceChildren(node);
@@ -787,6 +796,7 @@
 
       try {
         const result = await api("/tickets?" + params.toString());
+        if (myToken !== currentRenderToken) return;
         totalPages = result.total_pages || 0;
 
         pageInfo.textContent =
@@ -872,6 +882,7 @@
   // ---------- Ticket detail ----------
 
   async function renderTicketDetail(ticketId) {
+    const myToken = currentRenderToken;
     setActiveNav("tickets");
     const node = useTemplate("tpl-ticket-detail");
     viewEl.replaceChildren(node);
@@ -936,6 +947,7 @@
 
       try {
         const agents = await api("/auth/agents");
+        if (myToken !== currentRenderToken) return;
 
         agents.forEach((agent) => {
           const opt = document.createElement("option");
@@ -981,6 +993,7 @@
         showToast("Could not load ticket: " + err.message, true);
         return;
       }
+      if (myToken !== currentRenderToken) return;
 
       viewEl.querySelector('[data-field="ticket_number"]').textContent =
         ticket.ticket_number;
@@ -1027,6 +1040,7 @@
         const attachment = await api(
           "/tickets/" + ticketId + "/attachments"
         );
+        if (myToken !== currentRenderToken) return;
 
         if (attachment) {
           const sizeLabel = attachment.size_bytes
@@ -1124,6 +1138,7 @@
         const comments = await api(
           "/tickets/" + ticketId + "/comments"
         );
+        if (myToken !== currentRenderToken) return;
 
         if (comments.length === 0) {
           const p = document.createElement("p");
@@ -1231,6 +1246,8 @@
       window.location.hash = "#/tickets";
       return;
     }
+
+    currentRenderToken += 1;
 
     appShellEl.classList.toggle("no-sidebar", PUBLIC_ROUTES.has(route));
 
