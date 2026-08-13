@@ -74,7 +74,15 @@ jobs:
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          extra_args: --only-verified
+          # exclude-detectors=Lob: Lob (postal mail API) isn't used
+          # anywhere in this project, and its key format ("test_..."/
+          # "live_..." followed by alphanumerics) happens to match
+          # ordinary pytest function names like
+          # test_agents_list_requires_agent_or_admin - a confirmed false
+          # positive (verified locally against the real repo history on
+          # 2026-08-13: the two "verified" hits were exactly those two
+          # test names, not credentials). Every other detector still runs.
+          extra_args: --only-verified --exclude-detectors=Lob
 
   # Everything below only runs on a push to main - a PR gets test +
   # secret-scan for review, not a deployment.
