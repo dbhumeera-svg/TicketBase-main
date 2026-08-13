@@ -32,15 +32,27 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids = [aws_security_group.rds.id]
   publicly_accessible    = false
 
-  backup_retention_period = var.backup_retention_days
-  multi_az                = false
+  # Prod always keeps at least 7 days of backups regardless of what
+  # backup_retention_days happens to be set to - a safety floor, not a
+  # ceiling (a higher var.backup_retention_days value still wins).
+  backup_retention_period = (
+    var.environment == "prod"
+    ? max(var.backup_retention_days, 7)
+    : var.backup_retention_days
+  )
+  multi_az = false
 
-  # This is a POC that gets destroyed and rebuilt repeatedly (checklist
-  # item 9, pass/fail gate 5). skip_final_snapshot + deletion_protection =
-  # false trade production safety for a clean `terraform destroy`. Flip
-  # both before this ever holds real data.
-  skip_final_snapshot = true
-  deletion_protection = false
+  # dev/test is a POC that gets destroyed and rebuilt repeatedly
+  # (checklist item 9, pass/fail gate 5) - skip_final_snapshot +
+  # deletion_protection = false there trades production safety for a
+  # clean `terraform destroy`. The moment var.environment = "prod",
+  # both flip: deletion_protection makes AWS itself refuse to delete
+  # this instance (via Terraform, the console, or the CLI) until it's
+  # explicitly turned off first, and a final snapshot is taken if it
+  # ever is. infra/destroy.sh's production confirmation prompt is the
+  # human-facing layer on top of this AWS-enforced one.
+  skip_final_snapshot = var.environment != "prod"
+  deletion_protection = var.environment == "prod"
 
   tags = { Name = "${var.name_prefix}-db" }
 }

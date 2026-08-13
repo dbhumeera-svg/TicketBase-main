@@ -37,8 +37,7 @@ def main():
     frontend = subprocess.Popen(
         [
             sys.executable,
-            "-m",
-            "http.server",
+            str(FRONTEND_DIR / "serve.py"),
             str(FRONTEND_PORT),
         ],
         cwd=FRONTEND_DIR,

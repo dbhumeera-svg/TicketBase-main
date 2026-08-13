@@ -1,29 +1,48 @@
 from fastapi.testclient import TestClient
 
-from src.database import (
-    Base,
-    engine,
-)
 from src.main import app
+from conftest import auth_header, login, register_and_login, reset_db
 
 
 client = TestClient(app)
 
 
 def setup_function():
+    reset_db()
 
-    Base.metadata.drop_all(
-        bind=engine
+
+def _admin_headers():
+    return auth_header(login(client, "admin", "Admin@1234"))
+
+
+def _create_ticket(headers, **overrides):
+    payload = {
+        "title": "Laptop issue",
+        "description": "The laptop is not starting.",
+        "category": "HARDWARE",
+        "priority": "HIGH",
+    }
+    payload.update(overrides)
+
+    return client.post("/api/tickets", json=payload, headers=headers)
+
+
+def test_dashboard_requires_agent_or_admin():
+
+    user_headers = register_and_login(client, "dana")
+
+    response = client.get(
+        "/api/tickets/dashboard", headers=user_headers
     )
 
-    Base.metadata.create_all(
-        bind=engine
-    )
+    assert response.status_code == 403
 
 
 def test_dashboard_empty():
 
-    response = client.get("/api/dashboard")
+    response = client.get(
+        "/api/tickets/dashboard", headers=_admin_headers()
+    )
 
     assert response.status_code == 200
 
@@ -36,32 +55,36 @@ def test_dashboard_empty():
 
 def test_dashboard_counts():
 
-    client.post(
-        "/api/tickets",
-        json={
-            "title": "Laptop issue",
-            "description": "The laptop is not starting.",
-            "category": "HARDWARE",
-            "priority": "HIGH",
-        },
+    user_headers = register_and_login(client, "ellis")
+    agent_headers = register_and_login(
+        client, "farah", role="AGENT"
     )
 
-    client.post(
-        "/api/tickets",
-        json={
-            "title": "VPN issue",
-            "description": "The VPN is not connecting.",
-            "category": "NETWORK",
-            "priority": "LOW",
-        },
+    ticket_id = _create_ticket(
+        user_headers,
+        title="Laptop issue",
+        description="The laptop is not starting.",
+        category="HARDWARE",
+        priority="HIGH",
+    ).json()["id"]
+
+    _create_ticket(
+        user_headers,
+        title="VPN issue",
+        description="The VPN is not connecting.",
+        category="NETWORK",
+        priority="LOW",
     )
 
     client.patch(
-        "/api/tickets/1/status",
+        f"/api/tickets/{ticket_id}/status",
         json={"status": "IN_PROGRESS"},
+        headers=agent_headers,
     )
 
-    response = client.get("/api/dashboard")
+    response = client.get(
+        "/api/tickets/dashboard", headers=_admin_headers()
+    )
 
     assert response.status_code == 200
 

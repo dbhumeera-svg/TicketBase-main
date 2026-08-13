@@ -3,41 +3,187 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TicketDesk - a lightweight IT support ticket platform with role-based access, real-time notifications, and file attachments." />
+  <!-- Defense-in-depth for a static, no-inline-script site. style-src needs
+       'unsafe-inline' because the app sets el.style.* directly (bar widths,
+       theme swatches) via the CSSOM, which CSP treats as inline style;
+       connect-src/img-src stay open since attachments load from S3 (or the
+       API's own origin in local-disk mode) on a different host than this
+       page. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src *; img-src * data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self';" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%233b82f6'/%3E%3Ctext x='16' y='22' font-family='Arial,Helvetica,sans-serif' font-size='14' font-weight='700' fill='white' text-anchor='middle'%3ETD%3C/text%3E%3C/svg%3E" />
   <title>TicketDesk</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <span class="brand-mark">TD</span>
-        <span class="brand-name">TicketDesk</span>
+        <a href="#/" class="brand-link">
+          <span class="brand-mark">TD</span>
+          <span class="brand-name">TicketDesk</span>
+        </a>
+        <div id="brand-bell" class="brand-bell"></div>
       </div>
 
       <nav class="nav">
-        <a href="#/dashboard" data-route="dashboard">Dashboard</a>
-        <a href="#/tickets" data-route="tickets">Tickets</a>
-        <a href="#/tickets/new" data-route="new">New Ticket</a>
+        <a href="#/dashboard" data-route="dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#/tickets" data-route="tickets">
+          <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z"/><path d="M9 8v8" stroke-dasharray="2 2"/></svg>
+          <span>Tickets</span>
+        </a>
+        <a href="#/tickets/new" data-route="new">
+          <svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+          <span>New Ticket</span>
+        </a>
       </nav>
 
-      <div class="api-config">
-        <label for="api-base-input">API base URL</label>
-        <input id="api-base-input" type="text" spellcheck="false" />
-        <button id="api-base-save" type="button">Save</button>
-        <p id="api-status" class="api-status">Checking…</p>
+      <div class="sidebar-footer">
+        <div id="sidebar-auth" class="sidebar-auth"></div>
       </div>
     </aside>
 
     <main class="content">
+      <div class="topbar">
+        <div id="topbar-brand" class="topbar-brand"></div>
+        <div id="topbar-actions" class="topbar-actions"></div>
+      </div>
       <div id="toast" class="toast" hidden></div>
       <div id="view"></div>
     </main>
   </div>
 
+  <template id="tpl-landing">
+    <div class="landing">
+      <section class="landing-hero">
+        <span class="landing-eyebrow">IT Support, Simplified</span>
+        <h1>Support tickets, tracked end-to-end.</h1>
+        <p class="landing-pitch">
+          TicketDesk is a lightweight IT support desk: submit issues, route
+          them to the right agent, and keep everyone in the loop with
+          real-time status updates and notifications.
+        </p>
+        <div class="landing-cta">
+          <a href="#/register" class="btn btn-primary">Get Started</a>
+          <a href="#/login" class="btn btn-secondary">Log In</a>
+        </div>
+      </section>
+
+      <section class="landing-features">
+        <div class="landing-feature">
+          <div class="landing-feature-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h2>Ticket Tracking</h2>
+          <p>Create, filter, and follow tickets through a clear
+          Open &rarr; In Progress &rarr; Resolved &rarr; Closed lifecycle.</p>
+        </div>
+        <div class="landing-feature">
+          <div class="landing-feature-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h2>Role-Based Access</h2>
+          <p>Users, agents, and admins each see exactly what they need -
+          agents work assigned tickets, admins see and assign everything.</p>
+        </div>
+        <div class="landing-feature">
+          <div class="landing-feature-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <h2>Real-Time Notifications</h2>
+          <p>Get notified the moment your ticket is updated or commented
+          on, without refreshing the page.</p>
+        </div>
+        <div class="landing-feature">
+          <div class="landing-feature-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </div>
+          <h2>File Attachments</h2>
+          <p>Attach screenshots and documents directly to a ticket to
+          give agents the full picture.</p>
+        </div>
+      </section>
+
+      <footer class="landing-footer">
+        <p>TicketDesk &mdash; a demo IT support ticket platform.</p>
+      </footer>
+    </div>
+  </template>
+
+  <template id="tpl-login">
+    <div class="auth-wrap">
+      <form class="form auth-form" data-field="login-form">
+        <h1>Log in</h1>
+
+        <label>
+          Username or email
+          <input type="text" name="username" required autocomplete="username" />
+        </label>
+
+        <label>
+          Password
+          <div class="password-field">
+            <input type="password" name="password" required autocomplete="current-password" data-field="password-input" />
+            <button type="button" class="password-toggle" data-field="password-toggle" aria-label="Show password"></button>
+          </div>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Log in</button>
+        </div>
+
+        <p class="auth-switch">No account? <a href="#/register">Register</a></p>
+      </form>
+    </div>
+  </template>
+
+  <template id="tpl-register">
+    <div class="auth-wrap">
+      <form class="form auth-form" data-field="register-form">
+        <h1>Create account</h1>
+
+        <label>
+          Username
+          <input type="text" name="username" minlength="3" maxlength="50" required autocomplete="username" />
+        </label>
+
+        <label>
+          Email
+          <input type="email" name="email" required autocomplete="email" />
+        </label>
+
+        <label>
+          Password
+          <div class="password-field">
+            <input type="password" name="password" minlength="8" maxlength="100" required autocomplete="new-password" data-field="password-input" />
+            <button type="button" class="password-toggle" data-field="password-toggle" aria-label="Show password"></button>
+          </div>
+        </label>
+        <p class="hint">Must include an uppercase letter, a lowercase letter, a digit, and one of @#$%^&amp;+=!</p>
+
+        <label>
+          Role
+          <select name="role">
+            <option value="USER" selected>User</option>
+            <option value="AGENT">Support Agent</option>
+          </select>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Create account</button>
+        </div>
+
+        <p class="auth-switch">Already have an account? <a href="#/login">Log in</a></p>
+      </form>
+    </div>
+  </template>
+
   <template id="tpl-dashboard">
     <header class="view-header">
       <h1>Dashboard</h1>
-      <p class="subtitle">Ticket volume at a glance</p>
     </header>
 
     <section class="summary-cards">
@@ -99,25 +245,41 @@
           <option value="OTHER">Other</option>
         </select>
       </label>
+
+      <label data-field="assigned-filter-wrap" hidden>
+        Assignment
+        <select data-filter="assigned_status">
+          <option value="">All</option>
+          <option value="unassigned">Unassigned</option>
+          <option value="assigned">Assigned</option>
+        </select>
+      </label>
     </section>
 
     <section class="table-wrap">
       <table class="ticket-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Ticket #</th>
             <th>Title</th>
             <th>Category</th>
             <th>Priority</th>
             <th>Status</th>
-            <th>Updated</th>
+            <th>Created By</th>
+            <th>Assigned To</th>
           </tr>
         </thead>
         <tbody data-field="ticket-rows">
-          <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+          <tr><td colspan="7" class="empty-row">Loading…</td></tr>
         </tbody>
       </table>
     </section>
+
+    <div class="pagination" data-field="pagination">
+      <button type="button" class="btn btn-secondary" data-field="prev-page">&larr; Prev</button>
+      <span data-field="page-info">Page 1</span>
+      <button type="button" class="btn btn-secondary" data-field="next-page">Next &rarr;</button>
+    </div>
   </template>
 
   <template id="tpl-new-ticket">
@@ -176,24 +338,30 @@
         <div class="ticket-title-row">
           <h1 data-field="title"></h1>
           <span class="badge" data-field="priority-badge"></span>
+          <span class="badge" data-field="status-badge"></span>
         </div>
 
         <p class="ticket-meta">
-          #<span data-field="id"></span> ·
+          <span data-field="ticket_number"></span> ·
           <span data-field="category"></span> ·
-          created <span data-field="created_at"></span>
+          created <span data-field="created_at"></span> by <span data-field="created_by"></span>
         </p>
 
         <p class="ticket-description" data-field="description"></p>
 
-        <div class="status-control">
-          <label for="status-select">Status</label>
-          <select id="status-select" data-field="status-select">
-            <option value="OPEN">Open</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="RESOLVED">Resolved</option>
-            <option value="CLOSED">Closed</option>
-          </select>
+        <p class="ticket-meta" data-field="assignment-info"></p>
+
+        <div class="status-control" data-field="status-control" hidden>
+          <span class="control-label">Update status</span>
+          <div class="status-buttons" data-field="status-buttons"></div>
+        </div>
+
+        <div class="assign-control" data-field="assign-control" hidden>
+          <span class="control-label">Assign to agent</span>
+          <div class="assign-row">
+            <select data-field="assign-select"></select>
+            <button type="button" class="btn btn-secondary" data-field="assign-btn">Assign</button>
+          </div>
         </div>
 
         <div class="attachment-block">
@@ -212,7 +380,6 @@
         <div class="comments-list" data-field="comments-list"></div>
 
         <form class="comment-form" data-field="comment-form">
-          <input type="text" name="author" placeholder="Your name" minlength="2" maxlength="50" required />
           <textarea name="message" placeholder="Add a comment…" minlength="1" maxlength="1000" rows="3" required></textarea>
           <button type="submit" class="btn btn-primary">Add Comment</button>
         </form>
@@ -220,7 +387,7 @@
     </section>
   </template>
 
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="config.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

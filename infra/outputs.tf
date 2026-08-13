@@ -2,6 +2,11 @@ output "aws_region" {
   value = var.aws_region
 }
 
+output "environment" {
+  description = "Which environment this state is actually deployed as (dev/test/prod). infra/destroy.sh reads this to decide whether to demand the production confirmation phrase."
+  value       = var.environment
+}
+
 output "vpc_id" {
   value = aws_vpc.main.id
 }
@@ -79,4 +84,9 @@ output "frontend_bucket" {
 output "lambda_thumbnail_ecr_repository_url" {
   description = "Push the thumbnailer image here, tagged with the git commit SHA."
   value       = aws_ecr_repository.lambda_thumbnail.repository_url
+}
+
+output "lambda_thumbnail_function_name" {
+  description = "Pass this to `aws lambda update-function-code` after pushing a new thumbnailer image."
+  value       = aws_lambda_function.thumbnail.function_name
 }

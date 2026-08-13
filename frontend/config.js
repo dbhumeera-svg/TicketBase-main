@@ -1,4 +1,4 @@
-// Default API base URL used when the browser has no saved override.
+// The API base URL the whole app talks to (see getApiBase() in app.js).
 // Point this at your FastAPI backend (e.g. http://localhost:8000 for a
 // local `uvicorn src.main:app --reload` run, or your ALB DNS name once
 // deployed - infra/s3_frontend_website.tf generates a deployed copy of

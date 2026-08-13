@@ -7,11 +7,13 @@ name: TicketDesk Deploy
 #
 # One-time setup (see infra/README.md for how to get these values):
 #   Repo variables (Settings -> Secrets and variables -> Actions -> Variables):
-#     AWS_REGION           - e.g. us-east-1
-#     ECR_REPOSITORY_URL   - infra output: ecr_repository_url
-#     ECS_CLUSTER          - infra output: ecs_cluster_name
-#     ECS_SERVICE          - infra output: ecs_service_name
-#     APP_URL              - infra output: frontend_url (or alb_dns_name)
+#     AWS_REGION                 - e.g. us-east-1
+#     ECR_REPOSITORY_URL         - infra output: ecr_repository_url
+#     ECS_CLUSTER                - infra output: ecs_cluster_name
+#     ECS_SERVICE                - infra output: ecs_service_name
+#     APP_URL                    - infra output: frontend_url (or alb_dns_name)
+#     LAMBDA_ECR_REPOSITORY_URL  - infra output: lambda_thumbnail_ecr_repository_url
+#     LAMBDA_FUNCTION_NAME       - infra output: lambda_thumbnail_function_name
 #   Repo secrets (Settings -> Secrets and variables -> Actions -> Secrets):
 #     AWS_ACCESS_KEY_ID     - infra output: github_actions_access_key_id
 #     AWS_SECRET_ACCESS_KEY - infra output: github_actions_secret_access_key
@@ -118,6 +120,55 @@ jobs:
           docker build -t "$REPO_URL:$TAG" .
           docker push "$REPO_URL:$TAG"
           echo "image=$REPO_URL:$TAG" >> "$GITHUB_OUTPUT"
+
+  # Independent of build-and-push/deploy below - a different image and a
+  # different AWS service (Lambda, not ECS) - so it runs in parallel
+  # rather than gating the API deployment on thumbnailer success or vice
+  # versa. Previously a manual step (infra/README.md steps 6-7); this is
+  # the M6 gap called out in README.md/NOTES.md as "not automated yet".
+  build-and-deploy-lambda:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [test, secret-scan]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      # OIDC version - see the comment in build-and-push above.
+      # - name: Configure AWS credentials (OIDC)
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+      #     aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Log in to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push thumbnailer image (tagged with the commit SHA)
+        env:
+          REPO_URL: ${{ vars.LAMBDA_ECR_REPOSITORY_URL }}
+        run: |
+          TAG="${GITHUB_SHA::7}"
+          docker build -t "$REPO_URL:$TAG" lambda/thumbnail
+          docker push "$REPO_URL:$TAG"
+          echo "IMAGE=$REPO_URL:$TAG" >> "$GITHUB_ENV"
+
+      - name: Update Lambda function code and wait for it to finish updating
+        run: |
+          aws lambda update-function-code \
+            --function-name "${{ vars.LAMBDA_FUNCTION_NAME }}" \
+            --image-uri "$IMAGE" \
+            --publish
+          aws lambda wait function-updated \
+            --function-name "${{ vars.LAMBDA_FUNCTION_NAME }}"
 
   deploy:
     needs: build-and-push

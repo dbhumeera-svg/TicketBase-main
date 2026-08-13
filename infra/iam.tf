@@ -28,9 +28,12 @@ resource "aws_iam_role_policy_attachment" "execution_managed" {
 # (checklist item 32, pass/fail gate 2).
 data "aws_iam_policy_document" "execution_secrets" {
   statement {
-    sid       = "ReadDbPassword"
-    actions   = ["secretsmanager:GetSecretValue"]
-    resources = [aws_secretsmanager_secret.db_password.arn]
+    sid     = "ReadSecrets"
+    actions = ["secretsmanager:GetSecretValue"]
+    resources = [
+      aws_secretsmanager_secret.db_password.arn,
+      aws_secretsmanager_secret.jwt_secret.arn,
+    ]
   }
 
   statement {

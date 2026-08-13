@@ -31,6 +31,15 @@ resource "aws_ecs_task_definition" "app" {
         }
       ]
 
+      # Not a secret - just tells the running app which environment it's
+      # in. src/main.py reads this to gate demo admin/agent/user seeding
+      # (skipped entirely outside "prod"/production-equivalent runs) and
+      # src/security.py uses it to require JWT_SECRET be explicitly set
+      # rather than silently generating a throwaway one.
+      environment = [
+        { name = "ENVIRONMENT", value = var.environment },
+      ]
+
       # All config comes from Parameter Store / Secrets Manager at
       # container start, resolved by the execution role above - never
       # baked into the image or set as a plaintext env var (checklist
@@ -43,6 +52,7 @@ resource "aws_ecs_task_definition" "app" {
         { name = "CORS_ORIGINS", valueFrom = aws_ssm_parameter.cors_origins.arn },
         { name = "ATTACHMENTS_BUCKET", valueFrom = aws_ssm_parameter.attachments_bucket.arn },
         { name = "DB_PASSWORD", valueFrom = aws_secretsmanager_secret.db_password.arn },
+        { name = "JWT_SECRET", valueFrom = aws_secretsmanager_secret.jwt_secret.arn },
       ]
 
       logConfiguration = {

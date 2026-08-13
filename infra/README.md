@@ -38,11 +38,47 @@ anyone's looking at it.
 | SNS | ✅ 1,000 email notifications/mo | Free at demo volume |
 | ECR (2 repos) | ✅ 500MB/mo, first 12 mo | Free unless images pile up |
 
-**The single most effective thing you can do:** `terraform destroy` when
+**The single most effective thing you can do:** `./destroy.sh` when
 you're not actively using it, `terraform apply` again before you need it.
 The VPC endpoints + ALB + Fargate together run ~$60/month continuously —
 destroying between sessions turns that into a few dollars for the hours
-you actually spend developing and demoing.
+you actually spend developing and demoing. Use `./destroy.sh`, not a bare
+`terraform destroy` — see the next section for why.
+
+## Environments and safe teardown
+
+`var.environment` (`dev` / `test` / `prod`, default `dev`) is the one
+setting that changes how cautious this stack behaves - it doesn't create
+separate copies of anything by itself (`name_prefix` does that if you
+want multiple stacks side by side). What it actually controls:
+
+- **`rds.tf`**: only `prod` gets `deletion_protection = true` (AWS itself
+  then refuses to delete the database, through Terraform, the console,
+  or the CLI, until that's turned off by hand) and a real final snapshot
+  on delete (`skip_final_snapshot = false`), plus a 7-day minimum backup
+  retention floor. `dev`/`test` stay cheap and freely destroyable.
+- **`ecs.tf`**: injected into the running container as `ENVIRONMENT`, so
+  the app itself knows - `src/main.py` only ever seeds the demo
+  admin/agent/user accounts (well-known passwords, documented in this
+  repo) outside `prod`. `src/security.py` also requires `prod` to have a
+  real `JWT_SECRET` explicitly set (Terraform always provides one via
+  Secrets Manager here) rather than silently running with a throwaway one.
+
+**Always tear down through `./destroy.sh`, not a bare `terraform
+destroy`:**
+
+```bash
+./destroy.sh                            # destroys whatever this state currently is
+./destroy.sh -var="environment=test"     # extra args pass straight through to terraform
+```
+
+It reads the *actually-deployed* environment from `terraform output
+environment` (not a possibly-stale tfvars file) and gates on it: `dev`/
+`test` get a normal `terraform plan -destroy` preview and a y/N prompt;
+`prod` refuses to proceed at all unless you type the literal phrase
+`destroy production` — there's no flag or CI-friendly bypass for that on
+purpose. This is a human-facing safety net on top of the AWS-enforced
+`deletion_protection` above, not a replacement for it.
 
 ## Layout
 
@@ -66,6 +102,7 @@ infra/
   observability.tf            # M7: dashboard, 3 alarms, SNS topic
   github_oidc.tf               # M6: OIDC provider + deploy role for GitHub Actions
   outputs.tf
+  destroy.sh                   # safe wrapper around terraform destroy - see "Environments and safe teardown"
   terraform.tfvars.example
 ```
 
@@ -149,6 +186,13 @@ terraform apply \
 
 This updates the ECS task definition (rolling the service to the new
 image) and the Lambda function code.
+
+Steps 5-7 are only needed for this first, by-hand bootstrap (ECR has to
+exist with *something* in it before `container_image`/`lambda_image` can
+point at a real tag). After that, both images rebuild and redeploy
+automatically on every push to `main` - `deploy.yml`'s `build-and-push`
+job for the API, `build-and-deploy-lambda` for the thumbnailer - so you
+shouldn't need to repeat this manually again.
 
 **8. Upload the frontend and verify:**
 

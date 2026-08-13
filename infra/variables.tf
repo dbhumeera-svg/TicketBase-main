@@ -14,9 +14,14 @@ variable "owner" {
 }
 
 variable "environment" {
-  description = "Environment tag, e.g. dev."
+  description = "Deployment environment - dev, test, or prod. Tags every resource (versions.tf's default_tags), is injected into the running app as ENVIRONMENT (ecs.tf - gates demo-user seeding, src/main.py), and drives RDS's production safety settings (rds.tf: deletion_protection, skip_final_snapshot). Only \"prod\" gets those protections - keep dev/test on this default so they stay freely destroyable."
   type        = string
   default     = "dev"
+
+  validation {
+    condition     = contains(["dev", "test", "prod"], var.environment)
+    error_message = "environment must be one of: dev, test, prod."
+  }
 }
 
 variable "cost_center" {
@@ -109,9 +114,9 @@ variable "backup_retention_days" {
 }
 
 variable "attachments_cors_allowed_origins" {
-  description = "Origins allowed to PUT/POST/GET directly against the attachments bucket. Tighten to your frontend_url output once M4 is applied."
+  description = "Extra origins (beyond the frontend's own S3 website endpoint, which is always allowed) permitted to PUT/POST/GET directly against the attachments bucket - e.g. a custom domain."
   type        = list(string)
-  default     = ["*"]
+  default     = []
 }
 
 variable "lambda_image" {

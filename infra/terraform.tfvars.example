@@ -7,6 +7,18 @@ name_prefix = "tkt-ab" # your initials, lowercase, e.g. tkt-jd
 owner       = "Jane Doe"
 aws_region  = "us-east-1"
 
+# dev (default) | test | prod. Use a different name_prefix per
+# environment too (e.g. tkt-ab-dev / tkt-ab-prod) if you ever run more
+# than one at once - environment alone doesn't separate state/resources,
+# it only changes safety behavior within whichever stack you apply:
+#   - prod gets deletion_protection=true + a real final snapshot on the
+#     RDS instance (infra/rds.tf), a backup retention floor of 7 days,
+#     and infra/destroy.sh demands a typed confirmation before touching it.
+#   - dev/test stay freely destroyable (the POC-friendly defaults).
+#   - Demo admin/agent/user accounts (src/main.py) only ever get seeded
+#     in dev/test - prod never creates them, no matter what.
+environment = "dev"
+
 # Who gets paged by the 3 CloudWatch alarms (M7). AWS emails a
 # subscription-confirmation link the first time - confirm it or alarms
 # fire silently.

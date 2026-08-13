@@ -142,9 +142,6 @@ Not automated as code:
 - Auto-scaling, HTTPS on a real domain, blue/green deployment — stretch
   goals (§9 of the brief), not implemented (HTTPS specifically would need
   CloudFront or an ALB HTTPS listener back in the picture)
-- Updating the Lambda thumbnailer image isn't wired into
-  `deploy.yml` yet — still a manual step (documented in
-  [infra/README.md](infra/README.md))
 - M8's cost report, load sanity check, and full checklist walkthrough are
   verification steps for you and your pod to run against a real deploy,
   not something Terraform produces

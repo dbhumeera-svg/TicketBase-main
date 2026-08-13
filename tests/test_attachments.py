@@ -1,27 +1,21 @@
 from fastapi.testclient import TestClient
 
-from src.database import (
-    Base,
-    engine,
-)
 from src.main import app
+from conftest import register_and_login, reset_db
 
 
 client = TestClient(app)
 
 
 def setup_function():
-
-    Base.metadata.drop_all(
-        bind=engine
-    )
-
-    Base.metadata.create_all(
-        bind=engine
-    )
+    reset_db()
 
 
-def _create_ticket():
+def _headers():
+    return register_and_login(client, "attach_user")
+
+
+def _create_ticket(headers):
 
     response = client.post(
         "/api/tickets",
@@ -32,14 +26,16 @@ def _create_ticket():
             ),
             "priority": "HIGH",
         },
+        headers=headers,
     )
 
     return response.json()["id"]
 
 
-def test_presign_upload():
+def test_presign_requires_auth():
 
-    ticket_id = _create_ticket()
+    headers = _headers()
+    ticket_id = _create_ticket(headers)
 
     response = client.post(
         f"/api/tickets/{ticket_id}/attachments/presign",
@@ -47,6 +43,23 @@ def test_presign_upload():
             "filename": "screenshot.png",
             "content_type": "image/png",
         },
+    )
+
+    assert response.status_code == 401
+
+
+def test_presign_upload():
+
+    headers = _headers()
+    ticket_id = _create_ticket(headers)
+
+    response = client.post(
+        f"/api/tickets/{ticket_id}/attachments/presign",
+        json={
+            "filename": "screenshot.png",
+            "content_type": "image/png",
+        },
+        headers=headers,
     )
 
     assert response.status_code == 201
@@ -62,9 +75,31 @@ def test_presign_upload():
     assert data["upload_fields"]["Content-Type"] == "image/png"
 
 
+def test_presign_forbidden_for_unrelated_user():
+
+    owner_headers = _headers()
+    ticket_id = _create_ticket(owner_headers)
+
+    stranger_headers = register_and_login(
+        client, "attach_stranger"
+    )
+
+    response = client.post(
+        f"/api/tickets/{ticket_id}/attachments/presign",
+        json={
+            "filename": "screenshot.png",
+            "content_type": "image/png",
+        },
+        headers=stranger_headers,
+    )
+
+    assert response.status_code == 403
+
+
 def test_presign_rejects_bad_type():
 
-    ticket_id = _create_ticket()
+    headers = _headers()
+    ticket_id = _create_ticket(headers)
 
     response = client.post(
         f"/api/tickets/{ticket_id}/attachments/presign",
@@ -72,6 +107,7 @@ def test_presign_rejects_bad_type():
             "filename": "notes.txt",
             "content_type": "text/plain",
         },
+        headers=headers,
     )
 
     assert response.status_code == 415
@@ -79,12 +115,15 @@ def test_presign_rejects_bad_type():
 
 def test_presign_missing_ticket():
 
+    headers = _headers()
+
     response = client.post(
         "/api/tickets/999/attachments/presign",
         json={
             "filename": "screenshot.png",
             "content_type": "image/png",
         },
+        headers=headers,
     )
 
     assert response.status_code == 404
@@ -92,7 +131,8 @@ def test_presign_missing_ticket():
 
 def test_get_attachment_after_presign():
 
-    ticket_id = _create_ticket()
+    headers = _headers()
+    ticket_id = _create_ticket(headers)
 
     client.post(
         f"/api/tickets/{ticket_id}/attachments/presign",
@@ -100,10 +140,12 @@ def test_get_attachment_after_presign():
             "filename": "screenshot.png",
             "content_type": "image/png",
         },
+        headers=headers,
     )
 
     response = client.get(
-        f"/api/tickets/{ticket_id}/attachments"
+        f"/api/tickets/{ticket_id}/attachments",
+        headers=headers,
     )
 
     assert response.status_code == 200
@@ -122,10 +164,12 @@ def test_get_attachment_after_presign():
 
 def test_get_attachment_when_none_uploaded():
 
-    ticket_id = _create_ticket()
+    headers = _headers()
+    ticket_id = _create_ticket(headers)
 
     response = client.get(
-        f"/api/tickets/{ticket_id}/attachments"
+        f"/api/tickets/{ticket_id}/attachments",
+        headers=headers,
     )
 
     assert response.status_code == 200
@@ -134,8 +178,10 @@ def test_get_attachment_when_none_uploaded():
 
 def test_get_attachment_missing_ticket():
 
+    headers = _headers()
+
     response = client.get(
-        "/api/tickets/999/attachments"
+        "/api/tickets/999/attachments", headers=headers
     )
 
     assert response.status_code == 404
@@ -143,7 +189,8 @@ def test_get_attachment_missing_ticket():
 
 def test_re_presign_replaces_existing_attachment():
 
-    ticket_id = _create_ticket()
+    headers = _headers()
+    ticket_id = _create_ticket(headers)
 
     client.post(
         f"/api/tickets/{ticket_id}/attachments/presign",
@@ -151,6 +198,7 @@ def test_re_presign_replaces_existing_attachment():
             "filename": "first.png",
             "content_type": "image/png",
         },
+        headers=headers,
     )
 
     client.post(
@@ -159,10 +207,12 @@ def test_re_presign_replaces_existing_attachment():
             "filename": "second.png",
             "content_type": "image/png",
         },
+        headers=headers,
     )
 
     response = client.get(
-        f"/api/tickets/{ticket_id}/attachments"
+        f"/api/tickets/{ticket_id}/attachments",
+        headers=headers,
     )
 
     assert response.json()["original_filename"] == "second.png"
