@@ -22,6 +22,11 @@
 resource "aws_s3_bucket" "frontend" {
   bucket = "${var.name_prefix}-frontend"
 
+  # Without this, `terraform destroy` fails with BucketNotEmpty once the
+  # static site files are in there - a POC bucket has no retention
+  # requirement that would argue for the safer default.
+  force_destroy = true
+
   tags = { Name = "${var.name_prefix}-frontend" }
 }
 

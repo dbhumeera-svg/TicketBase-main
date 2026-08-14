@@ -3,6 +3,11 @@ resource "aws_ecr_repository" "lambda_thumbnail" {
   name                 = "${var.name_prefix}-thumbnail-lambda"
   image_tag_mutability = "IMMUTABLE"
 
+  # Without this, `terraform destroy` fails once CI has pushed even one
+  # image - a POC registry has no retention requirement that would argue
+  # for the safer default.
+  force_delete = true
+
   image_scanning_configuration {
     scan_on_push = true
   }

@@ -1,6 +1,11 @@
 resource "aws_s3_bucket" "attachments" {
   bucket = "${var.name_prefix}-attachments"
 
+  # Without this, `terraform destroy` fails with BucketNotEmpty as soon
+  # as one real attachment has been uploaded - a POC bucket has no
+  # retention requirement that would argue for the safer default.
+  force_destroy = true
+
   tags = { Name = "${var.name_prefix}-attachments" }
 }
 
