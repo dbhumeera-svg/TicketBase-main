@@ -6,8 +6,10 @@ effect until a hard reload. This sends Cache-Control: no-store on every
 response so a normal refresh always picks up the latest files.
 """
 
+import os
 import sys
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from pathlib import Path
 
 
 class NoCacheHandler(SimpleHTTPRequestHandler):
@@ -17,5 +19,11 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    # SimpleHTTPRequestHandler serves relative to the process's cwd, not
+    # this file's location - without this, running `python
+    # frontend/serve.py` from the repo root serves a directory listing
+    # of the repo instead of the frontend.
+    os.chdir(Path(__file__).resolve().parent)
+
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 5500
     HTTPServer(("", port), NoCacheHandler).serve_forever()

@@ -7,16 +7,22 @@ GitHub Actions CI/CD).
 
 ## Features
 
+- JWT auth (login/register/logout) with three roles - ADMIN, AGENT, USER.
+  Admin accounts are seeded, never created via public registration.
+  Role-scoped ticket visibility and agent assignment.
+- Landing page for unauthenticated visitors; a dev-server restart
+  invalidates existing sessions (see "Environment separation" below)
 - Create support tickets (title, description, category, priority)
-- View all tickets, view a ticket by ID
-- Update ticket status (OPEN → IN_PROGRESS → RESOLVED → CLOSED)
-- Delete tickets
+- View all tickets (role-scoped), view a ticket by ID
+- Update ticket status (OPEN → IN_PROGRESS → RESOLVED → CLOSED), assign
+  tickets to agents
 - Add threaded ticket comments
+- In-app notifications (ticket created, status changed, new comment)
 - Filter tickets by priority, category, and status
 - Dashboard summary: total tickets, counts by status, counts by priority
 - One file attachment per ticket (PNG/JPEG/GIF/PDF, up to 5MB), uploaded
   directly to S3 via a presigned URL, with an async Lambda-generated
-  thumbnail
+  thumbnail (local disk fallback when no S3 bucket is configured)
 - Application health check and database health check
 
 All backend routes live under `/api` (e.g. `/api/tickets`,
@@ -42,13 +48,14 @@ export DATABASE_URL=sqlite:///./ticketdesk.db   # or a Postgres URL
 uvicorn src.main:app --reload --port 8000
 
 # Frontend (static, no build step)
-cd frontend
-python -m http.server 5500
+python frontend/serve.py 5500
 ```
 
-Open `http://localhost:5500`; the sidebar's API base URL defaults to
+Open `http://localhost:5500`; the API base URL defaults to
 `http://localhost:8000` (see `frontend/config.js`). The backend enables
 CORS for all origins by default locally (override with `CORS_ORIGINS`).
+Use `frontend/serve.py`, not `python -m http.server` - the latter sends
+no cache-control headers, so browsers cache stale JS/CSS across restarts.
 
 **Attachments locally:** the presigned-upload flow calls S3 for real, so
 it needs `ATTACHMENTS_BUCKET` set to a real bucket and real AWS
@@ -68,15 +75,19 @@ pip install -r requirements.txt
 python -m pytest -v
 ```
 
-24 tests, all passing locally and in CI.
+68 tests, all passing locally and in CI.
 
 ## CI/CD
 
 `.github/workflows/deploy.yml`: on every push to `main` —
-test → secret scan → build → push to ECR → deploy to ECS → smoke test.
-Any failing step blocks the ones after it. Authenticates to AWS via
-GitHub OIDC federation (no access keys in GitHub). Setup instructions
-(which repo variables to set, where the values come from) are in
+test → secret scan → build → push to ECR → deploy to ECS (and, in
+parallel, build/deploy the thumbnailer Lambda) → smoke test. Any failing
+step blocks the ones after it. Authenticates to AWS via a scoped IAM
+user access key stored as a GitHub secret, not OIDC federation - the
+OIDC role and provider are deployed and ready, but blocked by an
+AWS-account-level restriction unrelated to this project's config; see
+[NOTES.md](NOTES.md) for the full diagnosis. Setup instructions (which
+repo variables to set, where the values come from) are in
 [infra/README.md](infra/README.md#wiring-up-cicd-m6).
 
 ## Infrastructure as Code
@@ -148,13 +159,29 @@ Not automated as code:
 
 ## Status against real AWS
 
-This has been applied against a real account — not just written and
-locally checked. One real bug turned up and got fixed along the way: the
-ECS service had no explicit dependency on the execution role's IAM
-policies or the VPC endpoints, so Terraform could (and did) create the
-service before either was actually ready, causing
-`CannotPullContainerError`. `infra/ecs.tf`'s `depends_on` now makes that
-ordering explicit. If something else doesn't match reality on your next
-apply, that's expected — check the Terraform error or the ECS task's
-stopped-task reason before changing anything (per the brief's own
-advice), and it's usually faster to resolve than it looks.
+This has been applied against a real account and exercised with live
+traffic — not just written and locally checked. Several real bugs turned
+up and got fixed along the way, each confirmed with direct evidence
+(CloudWatch logs, live HTTP responses) rather than guesswork:
+
+- The ECS service had no explicit dependency on the execution role's IAM
+  policies or the VPC endpoints, so Terraform could (and did) create the
+  service before either was actually ready, causing
+  `CannotPullContainerError`. `infra/ecs.tf`'s `depends_on` now makes
+  that ordering explicit.
+- The RDS tables were originally created by an early placeholder image
+  that predated the current models, so `GET /api/tickets` 500'd with a
+  missing-column error against live Postgres. `Base.metadata.create_all`
+  only creates missing tables, it doesn't migrate existing ones - there's
+  no Alembic (or similar) migration tool in this project, so a schema
+  change to an already-deployed database needs a manual reconciliation.
+- The frontend had a stale-render race: async view functions
+  (`renderDashboard`, `renderTickets`, `renderTicketDetail`) mutated the
+  DOM after an `await` without checking the user hadn't already navigated
+  away, crashing with `Cannot set properties of null`. Fixed with a
+  shared render-token guard in `frontend/app.js`.
+
+If something else doesn't match reality on your next apply, that's
+expected — check the Terraform error or the ECS task's stopped-task
+reason before changing anything (per the brief's own advice), and it's
+usually faster to resolve than it looks.

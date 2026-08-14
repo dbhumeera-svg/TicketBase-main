@@ -3,15 +3,21 @@
 Honest record of what isn't finished and why, per the brief's own guidance:
 an explained gap earns more than a silent one.
 
-## Deploy status: local only, not pushed, not applied
+## Deploy status: live, pushed, applied, verified end to end
 
-Everything below describes what's in this working tree. As of this
-writing none of it has been committed, pushed to `main`, or applied with
-`terraform apply` - the ECS service currently running in AWS (if it's
-running at all; this is a POC meant to be destroyed between sessions,
-see infra/README.md's cost note) is still on whatever image `deploy.yml`
-last actually built, which predates the auth feature entirely. Treat the
-rest of this file as "ready to ship," not "already shipped."
+Everything below is committed on `main`, applied to the real AWS account
+via `terraform apply`, and deployed through `deploy.yml`'s full pipeline
+(test -> secret-scan -> build -> deploy -> smoke-test, all green). The
+running app was manually verified against live AWS - not just CI green -
+covering register/login, role-scoped routing, ticket lifecycle, agent
+status transitions, comments, real S3 presigned-upload attachments, the
+Lambda thumbnailer, and in-app notifications. Two real bugs were found
+only under live testing and fixed: a stale-schema RDS table (created by
+an early placeholder image, predating the current models) and a
+stale-render race condition in the frontend (async view updates firing
+after the user had already navigated away). This is a POC meant to be
+destroyed between sessions - see infra/README.md's cost note - so treat
+"live" as "live until the next `terraform destroy`," not permanent.
 
 ## CI/CD (M6): OIDC federation blocked at the AWS account level
 
@@ -71,23 +77,23 @@ rather than presenting it as the original design.
 - M0-M5 (individual): confirmed working against real AWS - ALB health
   check, DB connectivity, ticket CRUD, attachments via presigned S3
   upload with Lambda thumbnailing, all manually verified end to end.
-- Auth (added after M0-M5): JWT login/register/roles now exist
-  (`src/security.py`, `src/routers/auth.py`). `infra/secrets.tf` now
-  provisions a Terraform-generated `JWT_SECRET` in Secrets Manager and
-  `ecs.tf`/`iam.tf` wire it into the task the same way `DB_PASSWORD` is -
-  never baked into the image or typed in by hand. This is written but
-  **not yet applied or pushed** - see the top-level "Deploy status" note.
-- Lambda thumbnailer CI/CD: previously a manual `docker build && docker
-  push` + `terraform apply -var="lambda_image=..."` per infra/README.md.
-  Now wired into `deploy.yml` as its own `build-and-deploy-lambda` job
-  (parallel to the API's build-and-push, since they're independent
-  services) - not yet exercised by an actual pipeline run.
-- Attachments bucket CORS: previously defaulted to `"*"`
-  (`attachments_cors_allowed_origins`). Now computed from the frontend
-  bucket's own `website_endpoint`, the same trick `cors_origins` already
-  used - no more manual two-step apply needed to tighten it.
+- Auth: JWT login/register/roles (`src/security.py`,
+  `src/routers/auth.py`). `infra/secrets.tf` provisions a
+  Terraform-generated `JWT_SECRET` in Secrets Manager, wired into the
+  ECS task the same way `DB_PASSWORD` is - never baked into the image or
+  typed in by hand. Applied and verified live.
+- Lambda thumbnailer CI/CD: automated in `deploy.yml` as its own
+  `build-and-deploy-lambda` job (parallel to the API's build-and-push,
+  since they're independent services). Exercised by real pipeline runs -
+  green, and the deployed thumbnail renders on the live ticket page.
+- Attachments bucket CORS: computed from the frontend bucket's own
+  `website_endpoint` (`attachments_cors_allowed_origins`) rather than a
+  hand-set `"*"` - no manual two-step apply needed to tighten it.
 - M7 (observability): dashboard and 3 alarms deployed; alarm-trip test
   not yet performed.
 - M8 (hardening/cost/teardown): tagging is live via provider
   `default_tags`; cost allocation tag activation, budget, cost report,
-  load test, and a full destroy/rebuild rehearsal are still open.
+  and load testing were never part of the original ask and remain out of
+  scope. A destroy/rebuild rehearsal is possible via `infra/destroy.sh`
+  but hasn't been run yet - pending explicit go-ahead, since it tears
+  down real billable resources.
