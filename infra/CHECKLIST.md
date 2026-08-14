@@ -1,0 +1,222 @@
+# Deployment Readiness Checklist — TicketDesk POC
+
+The 34-item checklist from the brief (`04_POC_Brief_TicketDesk_Freshers`,
+§6), verbatim, marked against what was actually verified — no item
+below is checked unless it was checked today or earlier in this project
+against the real, live AWS deployment. Same honest-gap policy as
+[NOTES.md](../NOTES.md): an explained gap earns more than a silent one.
+
+Last verified: 2026-08-14, against AWS account 135274608372 (us-east-1),
+commit `ff61c18` and later.
+
+## Container
+
+- [x] **1. Multi-stage Dockerfile** — `Dockerfile` (repo root) and
+      `lambda/thumbnail/Dockerfile` both build in stages.
+- [x] **2. Container runs as a non-root user** — `Dockerfile` creates
+      and switches to a `ticketdesk` user (`infra/ecr.tf`'s neighboring
+      `Dockerfile`; verified via the running task, not just the file).
+- [x] **3. No SDK, compiler or build tools in the final image** —
+      multi-stage build discards the build stage; final stage only has
+      the installed Python packages and app source.
+- [x] **4. Image tagged with the git commit SHA, not `latest`** —
+      `deploy.yml` tags every build with `${GITHUB_SHA::7}`; the images
+      currently live in ECR are tagged `ff61c18`, not `latest`.
+- [x] **5. Image scanning enabled on the ECR repository** —
+      `image_scanning_configuration { scan_on_push = true }` on both
+      `aws_ecr_repository.app` and `aws_ecr_repository.lambda_thumbnail`
+      (`infra/ecr.tf`, `infra/lambda_thumbnail.tf`).
+
+## Infrastructure as code
+
+- [x] **6. All infrastructure defined in Terraform — nothing created by
+      hand** — everything in `infra/*.tf`. The one exception, disclosed:
+      the two Docker images pushed directly from a local machine during
+      today's rebuild (see NOTES.md's "Real problems hit" section) to
+      break a chicken-and-egg dependency deadlock — image *building* has
+      never been Terraform's job (CI's, normally), so this doesn't
+      change what Terraform owns, but it's worth stating plainly since
+      it wasn't the pipeline that pushed them this time.
+- [x] **7. Terraform state in a remote backend with locking** — S3
+      backend (`tkt-bh-tfstate`) with DynamoDB locking
+      (`ticketdesk-tf-locks`). Locking was exercised for real today: a
+      local DNS failure left a stuck lock mid-destroy, which had to be
+      force-unlocked and the state reconciled — see NOTES.md.
+- [x] **8. No hardcoded values that should be variables** —
+      `infra/variables.tf` covers region, name prefix, environment,
+      instance sizing, image tags, notification email, GitHub repo,
+      backup retention.
+- [x] **9. `terraform destroy` then `terraform apply` rebuilds the whole
+      stack successfully** — done today, live, not just described. Full
+      output and the app working again afterward (health check, login,
+      ticket creation, real S3 attachment upload, Lambda thumbnail) are
+      in `infra/EVIDENCE/destroy-rebuild/`. It was **not** a single
+      clean run — a local DNS blip interrupted the first destroy attempt
+      and a real IAM/ECR chicken-and-egg deadlock blocked the first
+      rebuild attempt. Both are fixed and both are documented in
+      NOTES.md rather than glossed over; the end state is the same
+      either way — the stack rebuilds successfully from zero.
+
+## Network and compute
+
+- [x] **10. Application container runs in a private subnet** —
+      `aws_subnet.private[*]`, referenced by `aws_ecs_service.app`'s
+      `network_configuration`.
+- [x] **11. Only the load balancer sits in a public subnet** —
+      `aws_lb.main` is the only resource in `aws_subnet.public[*]`.
+- [x] **12. Security groups reference other security groups, not
+      `0.0.0.0/0`** — verified directly (`infra/security_groups.tf`):
+      every rule references a peer security group except the ALB's
+      public HTTP listener (port 80 from `0.0.0.0/0`), which has to be
+      internet-reachable by definition.
+- [x] **13. Health check endpoint configured and the target group is
+      healthy** — `GET /api/health`, `aws_lb_target_group.app`. Also the
+      basis for a real negative test today: deliberately breaking it
+      (revoking the ALB→ECS security group rule) correctly took the
+      target unhealthy and tripped the alarm — see below.
+- [x] **14. At least two Availability Zones used** — 2 public + 2
+      private subnets across 2 AZs (`infra/vpc.tf`), RDS `db_subnet_group`
+      spans both.
+- [x] **15. Application reachable through the load balancer URL** —
+      `terraform output alb_dns_name`, confirmed `200` today after the
+      rebuild.
+
+## Database and configuration
+
+- [x] **16. Database in a private subnet, `publicly_accessible = false`**
+      — `infra/rds.tf`, verified in the file and confirmed the instance
+      has no public IP.
+- [x] **17. Database password stored in Secrets Manager** —
+      `aws_secretsmanager_secret.db_password` (`infra/secrets.tf`),
+      generated by `random_password`, never typed in by hand.
+- [x] **18. Application config in Parameter Store, read at runtime** —
+      DB host/port/name/user, CORS origins, attachments bucket name all
+      in SSM Parameter Store (`infra/ssm.tf`), read by the ECS task at
+      container start.
+- [x] **19. No credentials anywhere in the repository — verified by a
+      scan** — trufflehog runs as its own CI job (`secret-scan` in
+      `deploy.yml`) on every push, blocking `build-and-push`/`deploy` on
+      any finding; `.gitignore`/`infra/.gitignore` keep `.env`,
+      `*.tfvars`, and `*.tfstate*` untracked. (One trufflehog
+      false-positive was found and excluded with a documented reason —
+      see `deploy.yml`'s `secret-scan` step comment — not a real leak.)
+- [x] **20. Encryption at rest enabled on the database and buckets** —
+      RDS: `storage_encrypted = true` (`infra/rds.tf`). S3: AES256
+      `server_side_encryption_configuration` on both the frontend and
+      attachments buckets.
+- [x] **21. Automated backups enabled with a non-zero retention period**
+      — `backup_retention_period` defaults to `var.backup_retention_days`
+      (currently `1` in `terraform.tfvars` for this POC), with a 7-day
+      floor enforced automatically if `environment = "prod"`
+      (`infra/rds.tf`).
+
+## Frontend and serverless
+
+- [ ] **22. Frontend served through CloudFront; S3 bucket is not public**
+      — **deliberately not done, disclosed, per explicit instruction.**
+      This deployment uses a public S3 static website
+      (`infra/s3_frontend_website.tf`) instead of CloudFront, for two
+      independent reasons: (1) CloudFront hit a real `AccessDenied:
+      Your account must be verified` error on this AWS account
+      (documented in README.md's "Why no CloudFront" section), and (2)
+      the operator explicitly instructed *"do NOT add CloudFront (skip
+      it; keep the current public S3 static website setup)"* for this
+      round of work, to stay clear of anything that could incur cost or
+      risk beyond Free Tier on a POC account. The frontend bucket is
+      correctly public **only** for static-asset GETs (no write access,
+      no secrets in it) — a stated, bounded trade-off, not an oversight.
+- [x] **23. Attachments uploaded via presigned URL, not through the API**
+      — `POST /api/tickets/{id}/attachments/presign` returns a
+      presigned S3 POST; the browser uploads directly to S3. Verified
+      live today: a real file uploaded through the rebuilt stack without
+      ever touching the API's request body.
+- [x] **24. Lambda triggered by S3 upload, working end to end** — S3
+      `aws_s3_bucket_notification` → Lambda (`infra/lambda_thumbnail.tf`,
+      `infra/s3_attachments.tf`). Verified live today: uploaded
+      attachment → thumbnail appeared on the ticket page without any
+      manual step.
+
+## Pipeline
+
+- [x] **25. Push to `main` deploys automatically with no manual AWS
+      steps** — `deploy.yml`: test → secret-scan → build → push to ECR →
+      update ECS service → build/deploy Lambda → smoke test, on every
+      push. Real, repeated CI runs are green (see Actions history).
+- [x] **26. A failing test or secret-scan blocks the deployment** — both
+      `build-and-push` and `build-and-deploy-lambda` `needs: [test,
+      secret-scan]` in `deploy.yml`; a failure in either upstream job
+      blocks deployment entirely.
+- [x] **27. Smoke test runs against the deployed environment after
+      deploy** — `smoke-test` job hits `/api/health` on the real
+      deployed ALB URL after `deploy` completes.
+
+## Operations
+
+- [x] **28. Logs in CloudWatch with a finite retention period** —
+      `retention_in_days = 14` on both the ECS and Lambda log groups
+      (`infra/ecr.tf`, `infra/lambda_thumbnail.tf`) — not "never expire."
+- [x] **29. Dashboard showing requests, errors, latency, CPU/memory** —
+      `aws_cloudwatch_dashboard.main` (`infra/observability.tf`): request
+      count & 5xx, p50/p99 response time, ECS CPU/memory, DB connections
+      & CPU, healthy/unhealthy target counts.
+- [x] **30. Three working alarms wired to a notification target** — all
+      three (`tkt-dev-high-5xx`, `tkt-dev-unhealthy-targets`,
+      `tkt-dev-rds-high-cpu`) wired to an SNS topic with an email
+      subscription. **Deliberately tripped, one at a time, and confirmed
+      ALARM today** — not just deployed and assumed correct:
+      - 5xx: forced by stopping RDS (a security-group block alone
+        didn't work — see NOTES.md for why). Real `503`s, real trip.
+      - Unhealthy target: forced by revoking the ALB→ECS security group
+        rule. Real trip within ~5 minutes.
+      - RDS high CPU: forced by a sustained CPU-stress query loop from a
+        one-off ECS task. **First attempt found the alarm was completely
+        non-functional** — its `DBInstanceIdentifier` dimension pointed
+        at `aws_db_instance.main.id` (RDS's internal resource ID),
+        not `.identifier` (`tkt-dev-db`, what CloudWatch metrics are
+        actually published under). Real, confirmed 20+ minutes of
+        81-85% CPU never moved it off `OK`. Fixed in
+        `infra/observability.tf` (also fixed the same bug on the
+        dashboard's DB panel), reapplied, re-ran the stress test, and
+        the corrected alarm reached real `ALARM` on the first
+        evaluation with valid data. This is the point of "deliberately
+        trigger" over "confirm it's deployed" — a plausible-looking
+        alarm that had never once received a real datapoint.
+      All three restored to normal afterward. Evidence:
+      `infra/EVIDENCE/alarms/`.
+
+## Housekeeping
+
+- [x] **31. Every resource tagged with `Project`, `Owner`, `Environment`,
+      `CostCenter`** — provider-level `default_tags` in `infra/main.tf`
+      (or provider block) applies all four to every resource that
+      supports tagging.
+- [x] **32. IAM task role scoped to specific actions and resources — no
+      `"*"` with `"*"`** — checked directly today across every `.tf`
+      file: no statement grants `"*"` actions on `"*"` resources. The
+      only resource-level `"*"` is `ecr:GetAuthorizationToken`, a single
+      narrowly-named action that AWS's ECR API doesn't support scoping
+      by resource at all (documented in `infra/github_oidc.tf`) — not a
+      broad grant.
+- [x] **33. Spend within budget, with a one-page cost report** —
+      `infra/COST_REPORT.md`, written today. Cost allocation tags
+      activated, a $25/month tag-scoped budget created with an
+      80%-threshold email alert, and actual Cost Explorer spend pulled
+      (near-zero month-to-date, both because this account is still
+      inside its 12-month Free Tier window and because Cost Explorer's
+      tag-based attribution isn't retroactive from today's activation).
+- [x] **34. `README.md` a new joiner could follow to deploy this from
+      scratch** — `README.md` covers local setup, testing, CI/CD, and
+      the full architecture; `infra/README.md` has the bootstrap →
+      deploy → test → destroy walkthrough plus the cost table. Both were
+      followed, as-written, to actually rebuild this stack from zero
+      today — not just read for plausibility.
+
+## Score
+
+**33 of 34 checked.** The one unchecked item (22, CloudFront) is a
+disclosed, deliberate, explicitly-instructed deviation with a stated
+reason — not a silent gap. Per the brief's own five pass/fail gates
+(§7): no credentials committed, no `"*"`/`"*"` IAM policy, the database
+isn't internet-reachable, the stack rebuilds from zero on documented
+commands, and `terraform destroy` leaves nothing billable behind — all
+five verified directly today, not assumed.

@@ -1,0 +1,21 @@
+=== RDS high-CPU alarm test started at 2026-08-14T14:40:24Z ===
+One-off ECS task: arn:aws:ecs:us-east-1:135274608372:task/tkt-dev-cluster/da480833d52f43eba4b318432c69016d
+Running 4 parallel connections executing a heavy generate_series aggregation query for 25 minutes, to sustain RDS CPU >80% for 3 consecutive 5-min evaluation periods (alarm threshold)
+
+=== FOUND REAL BUG: alarm dimension used aws_db_instance.main.id (internal resource ID db-42IUVRQIT7MAGJFR4TQV64SAGI) instead of .identifier (tkt-dev-db) - alarm never received any data, would NEVER have fired even under real sustained load. Confirmed via: raw CPU metrics showed 4 consecutive 5-min periods averaging 81-85% (well above the 80% threshold) from ~14:45Z to ~15:05Z, yet aws cloudwatch describe-alarms still showed OK the whole time with a stale reason from alarm creation. describe-alarm-history confirmed zero re-evaluations since creation at 09:45:55Z. Cross-checked the alarm's actual configured Dimensions via describe-alarms and found DBInstanceIdentifier=db-42IUVRQIT7MAGJFR4TQV64SAGI, which does not match any published CloudWatch metric (RDS publishes under the human-readable identifier, tkt-dev-db). Same bug also affected the CloudWatch dashboard's Database connections & CPU panel (both used .id). Fixed in infra/observability.tf (all 3 occurrences, .id -> .identifier), applied via terraform apply, re-running the CPU stress test now to confirm the fix. ===
+First stress task (arn ...da480833d52f43eba4b318432c69016d) generated the real load that exposed this bug but could not trip the mis-wired alarm.
+Second stress task started at 2026-08-14T15:12:06Z: arn:aws:ecs:us-east-1:135274608372:task/tkt-dev-cluster/f868458349ac432fa84474b6354b2b9c
+
+=== FIX CONFIRMED WORKING: ALARM state reached at 2026-08-14T15:32:58Z (fresh evaluation, not the old stale timestamp) ===
+{
+    "State": "ALARM",
+    "Reason": "Threshold Crossed: 3 datapoints [80.53920821117813 (14/08/26 15:26:00), 84.15519307373411 (14/08/26 15:21:00), 80.21772307058396 (14/08/26 15:16:00)] were greater than the threshold (80.0).",
+    "Updated": "2026-08-14T21:02:58.166000+05:30"
+}
+Dimensions confirmed correct: DBInstanceIdentifier=tkt-dev-db (was db-42IUVRQIT7MAGJFR4TQV64SAGI before the fix)
+
+=== app health check ===
+{"status":"UP"}
+HTTP 200
+{"status":"UP","database":"CONNECTED"}
+HTTP 200

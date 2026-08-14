@@ -1,0 +1,137 @@
+=== PRE-DESTROY STATE 2026-08-14T09:00:35Z ===
+
+--- terraform outputs ---
+alb_dns_name = "http://tkt-dev-alb-1628561447.us-east-1.elb.amazonaws.com"
+attachments_bucket = "tkt-dev-attachments"
+aws_region = "us-east-1"
+cloudwatch_dashboard_url = "https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=tkt-dev-ticketdesk"
+cloudwatch_log_group = "/ecs/tkt-dev-ticketdesk"
+db_endpoint = <sensitive>
+ecr_repository_url = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-ticketdesk"
+ecs_cluster_name = "tkt-dev-cluster"
+ecs_service_name = "tkt-dev-ticketdesk-svc"
+environment = "dev"
+frontend_bucket = "tkt-dev-frontend"
+frontend_url = "http://tkt-dev-frontend.s3-website-us-east-1.amazonaws.com"
+github_actions_access_key_id = <sensitive>
+github_actions_role_arn = "arn:aws:iam::135274608372:role/tkt-dev-github-actions-deploy"
+github_actions_secret_access_key = <sensitive>
+lambda_thumbnail_ecr_repository_url = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda"
+lambda_thumbnail_function_name = "tkt-dev-thumbnail"
+sns_alerts_topic_arn = "arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts"
+target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:135274608372:targetgroup/tkt-dev-tg/018636caad7c1944"
+vpc_id = "vpc-01b99f46108d6395a"
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mDeprecated Parameter[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+[33m│[0m [0minstead.
+[33m╵[0m[0m
+
+--- ALB health check ---
+{"status":"UP"}
+HTTP 200
+
+--- resource count in state ---
+101
+data.aws_availability_zones.available
+data.aws_ec2_managed_prefix_list.s3
+data.aws_iam_policy_document.ecs_assume
+data.aws_iam_policy_document.execution_secrets
+data.aws_iam_policy_document.frontend_bucket
+data.aws_iam_policy_document.github_actions_assume
+data.aws_iam_policy_document.github_actions_deploy
+data.aws_iam_policy_document.lambda_assume
+data.aws_iam_policy_document.lambda_thumbnail_permissions
+data.aws_iam_policy_document.task_attachments
+data.tls_certificate.github_actions
+aws_cloudwatch_dashboard.main
+aws_cloudwatch_log_group.app
+aws_cloudwatch_log_group.lambda_thumbnail
+aws_cloudwatch_metric_alarm.high_5xx
+aws_cloudwatch_metric_alarm.rds_high_cpu
+aws_cloudwatch_metric_alarm.unhealthy_targets
+aws_db_instance.main
+aws_db_subnet_group.main
+aws_ecr_repository.app
+aws_ecr_repository.lambda_thumbnail
+aws_ecs_cluster.main
+aws_ecs_service.app
+aws_ecs_task_definition.app
+aws_iam_access_key.github_actions_deploy
+aws_iam_openid_connect_provider.github_actions
+aws_iam_role.execution
+aws_iam_role.github_actions_deploy
+aws_iam_role.lambda_thumbnail
+aws_iam_role.task
+aws_iam_role_policy.execution_secrets
+aws_iam_role_policy.github_actions_deploy
+aws_iam_role_policy.lambda_thumbnail
+aws_iam_role_policy.task_attachments
+aws_iam_role_policy_attachment.execution_managed
+aws_iam_user.github_actions_deploy
+aws_iam_user_policy.github_actions_deploy
+aws_internet_gateway.main
+aws_lambda_function.thumbnail
+aws_lambda_permission.allow_s3
+aws_lb.main
+aws_lb_listener.http
+aws_lb_target_group.app
+aws_route_table.private
+aws_route_table.public
+aws_route_table_association.private[0]
+aws_route_table_association.private[1]
+aws_route_table_association.public[0]
+aws_route_table_association.public[1]
+aws_s3_bucket.attachments
+aws_s3_bucket.frontend
+aws_s3_bucket_cors_configuration.attachments
+aws_s3_bucket_notification.attachments
+aws_s3_bucket_policy.frontend
+aws_s3_bucket_public_access_block.attachments
+aws_s3_bucket_public_access_block.frontend
+aws_s3_bucket_server_side_encryption_configuration.attachments
+aws_s3_bucket_server_side_encryption_configuration.frontend
+aws_s3_bucket_versioning.attachments
+aws_s3_bucket_website_configuration.frontend
+aws_s3_object.frontend_config
+aws_s3_object.frontend_files["app.js"]
+aws_s3_object.frontend_files["index.html"]
+aws_s3_object.frontend_files["styles.css"]
+aws_secretsmanager_secret.db_password
+aws_secretsmanager_secret.jwt_secret
+aws_secretsmanager_secret_version.db_password
+aws_secretsmanager_secret_version.jwt_secret
+aws_security_group.alb
+aws_security_group.ecs_task
+aws_security_group.rds
+aws_security_group.vpc_endpoints
+aws_sns_topic.alerts
+aws_sns_topic_subscription.alerts_email[0]
+aws_ssm_parameter.attachments_bucket
+aws_ssm_parameter.cors_origins
+aws_ssm_parameter.db_host
+aws_ssm_parameter.db_name
+aws_ssm_parameter.db_port
+aws_ssm_parameter.db_user
+aws_subnet.private[0]
+aws_subnet.private[1]
+aws_subnet.public[0]
+aws_subnet.public[1]
+aws_vpc.main
+aws_vpc_endpoint.interface["ecr_api"]
+aws_vpc_endpoint.interface["ecr_dkr"]
+aws_vpc_endpoint.interface["logs"]
+aws_vpc_endpoint.interface["secretsmanager"]
+aws_vpc_endpoint.interface["ssm"]
+aws_vpc_endpoint.s3
+aws_vpc_security_group_egress_rule.alb_to_ecs
+aws_vpc_security_group_egress_rule.ecs_to_rds
+aws_vpc_security_group_egress_rule.ecs_to_s3_gateway
+aws_vpc_security_group_egress_rule.ecs_to_vpce
+aws_vpc_security_group_ingress_rule.alb_http_in
+aws_vpc_security_group_ingress_rule.ecs_from_alb
+aws_vpc_security_group_ingress_rule.rds_from_ecs
+aws_vpc_security_group_ingress_rule.vpce_from_ecs
+random_password.db
+random_password.jwt_secret

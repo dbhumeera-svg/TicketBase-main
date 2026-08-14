@@ -64,7 +64,19 @@ resource "aws_cloudwatch_metric_alarm" "rds_high_cpu" {
   alarm_description   = "RDS CPU utilization is sustained above 80%"
   namespace           = "AWS/RDS"
   metric_name         = "CPUUtilization"
-  dimensions          = { DBInstanceIdentifier = aws_db_instance.main.id }
+  # FIX: aws_db_instance.main.id resolves to RDS's internal DbiResourceId
+  # ("db-XXXX...", an opaque immutable ID) in this provider version, not
+  # the human-readable instance identifier ("tkt-dev-db") that AWS/RDS
+  # CloudWatch metrics are actually published under. With .id here, this
+  # alarm's dimension never matched any real metric data - it silently
+  # sat on zero datapoints forever, `treat_missing_data = "notBreaching"`
+  # kept it looking healthy, and it would never have fired even under a
+  # genuine sustained-CPU incident. Found by deliberately stress-testing
+  # RDS CPU to >80% for 20+ minutes (confirmed via raw
+  # `aws cloudwatch get-metric-statistics` against the correct
+  # identifier) and observing the alarm never left OK. `.identifier` is
+  # the attribute that actually matches the CloudWatch dimension.
+  dimensions = { DBInstanceIdentifier = aws_db_instance.main.identifier }
   statistic           = "Average"
   period              = 300
   evaluation_periods  = 3
@@ -142,8 +154,11 @@ resource "aws_cloudwatch_dashboard" "main" {
           title  = "Database connections & CPU"
           region = var.aws_region
           metrics = [
-            ["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", aws_db_instance.main.id, { stat = "Average" }],
-            ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", aws_db_instance.main.id, { stat = "Average" }],
+            # FIX: same wrong-attribute bug as the alarm above (.id is
+            # RDS's internal resource ID, not the CloudWatch dimension
+            # value) - this panel has been showing no data since deploy.
+            ["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", aws_db_instance.main.identifier, { stat = "Average" }],
+            ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", aws_db_instance.main.identifier, { stat = "Average" }],
           ]
           period = 60
         }

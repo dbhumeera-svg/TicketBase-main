@@ -1,0 +1,24 @@
+=== Verifying nothing billable remains ===
+--- RDS ---
+
+aws: [ERROR]: An error occurred (DBInstanceNotFound) when calling the DescribeDBInstances operation: DBInstance tkt-dev-db not found.
+--- ECS cluster ---
+INACTIVE
+--- ALB ---
+
+aws: [ERROR]: An error occurred (LoadBalancerNotFound) when calling the DescribeLoadBalancers operation: Load balancers '[tkt-dev-alb]' not found
+--- VPC ---
+
+aws: [ERROR]: An error occurred (InvalidVpcID.NotFound) when calling the DescribeVpcs operation: The vpc ID 'vpc-01b99f46108d6395a' does not exist
+--- S3 buckets ---
+--- ECR repos ---
+
+aws: [ERROR]: An error occurred (RepositoryNotFoundException) when calling the DescribeRepositories operation: The repository with name 'tkt-dev-ticketdesk' does not exist in the registry with id '135274608372'
+
+aws: [ERROR]: An error occurred (RepositoryNotFoundException) when calling the DescribeRepositories operation: The repository with name 'tkt-dev-thumbnail-lambda' does not exist in the registry with id '135274608372'
+--- Lambda function ---
+
+Additional error details:
+Type: User
+--- Secrets Manager ---
+--- VPC endpoints (search any leftover) ---

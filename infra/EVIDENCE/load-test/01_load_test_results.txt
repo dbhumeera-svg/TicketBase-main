@@ -1,0 +1,15 @@
+Load test started: 20 concurrent users, 300s duration
+
+Load test finished after 303.6s
+{
+  "total": 5987,
+  "errors": 0,
+  "by_status": {
+    "200": 5987
+  },
+  "error_details": []
+}
+
+Total requests: 5987
+Errors: 0
+Error rate: 0.000%

@@ -1,0 +1,26 @@
+=== Unhealthy-target alarm test started at 2026-08-14T11:49:39Z ===
+Revoking ingress rule sgr-09d2a1fdf6b46a8f1 from sg-0c30748834a38dac1 (ALB -> ECS on container port)
+{
+    "Return": true,
+    "RevokedSecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-09d2a1fdf6b46a8f1",
+            "GroupId": "sg-0c30748834a38dac1",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 8080,
+            "ToPort": 8080,
+            "ReferencedGroupId": "sg-0058b68ce948fb2ff",
+            "Description": "From the ALB only"
+        }
+    ]
+}
+Revoked. Current alarm state:
+OK
+=== ALARM CONFIRMED at 2026-08-14T11:55:15Z ===
+{
+    "StateValue": "ALARM",
+    "StateReason": "Threshold Crossed: 2 datapoints [2.0 (14/08/26 11:51:00), 1.0 (14/08/26 11:50:00)] were greater than the threshold (0.0).",
+    "StateUpdatedTimestamp": "2026-08-14T17:24:09.006000+05:30"
+}
+2026-08-14T11:58:09Z: alarm recovered, rule reconciled via terraform, app healthy

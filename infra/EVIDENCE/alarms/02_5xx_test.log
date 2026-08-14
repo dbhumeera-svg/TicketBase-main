@@ -1,0 +1,35 @@
+=== 5xx alarm test started at 2026-08-14T11:58:57Z ===
+Revoking ingress rule sgr-048292125accbacfa from RDS SG sg-0135e84b1443a5544 (ECS -> RDS on 5432), so DB-backed endpoints fail with 5xx
+{
+    "Return": true,
+    "RevokedSecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-048292125accbacfa",
+            "GroupId": "sg-0135e84b1443a5544",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 5432,
+            "ToPort": 5432,
+            "ReferencedGroupId": "sg-0c30748834a38dac1",
+            "Description": "From ECS tasks only"
+        }
+    ]
+}
+=== 5xx alarm test (attempt 2, via RDS stop) started at 2026-08-14T14:16:33Z ===
+Note: first attempt via security-group block failed to produce real 5xx because SQLAlchemy's warm connection pool kept serving requests without needing new connections - documented as a real finding.
+stopping
+First real 5xx confirmed at 2026-08-14T14:27:32Z: HTTP 503 {"detail":"Database is unavailable"}
+request 1: HTTP 503
+request 2: HTTP 503
+request 3: HTTP 503
+request 4: HTTP 503
+request 5: HTTP 503
+request 6: HTTP 503
+request 7: HTTP 503
+request 8: HTTP 503
+=== ALARM CONFIRMED at 2026-08-14T14:31:10Z ===
+{
+    "StateValue": "ALARM",
+    "StateReason": "Threshold Crossed: 1 datapoint [9.0 (14/08/26 14:23:00)] was greater than the threshold (5.0)."
+}
+2026-08-14T14:39:30Z: RDS restarted, ECS redeployed with fresh connections, app confirmed healthy (both /api/health and /api/health/database = 200). Alarm still shows ALARM pending next 5-min evaluation window rolling past the test traffic - expected, not a bug.

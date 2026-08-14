@@ -1,0 +1,672 @@
+=== Resuming apply at 2026-08-14T11:42:40Z ===
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mDeprecated Parameter[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+[33m│[0m [0minstead.
+[33m╵[0m[0m
+Acquiring state lock. This may take a few moments...
+[0m[1mdata.tls_certificate.github_actions: Reading...[0m[0m
+[0m[1mrandom_password.jwt_secret: Refreshing state... [id=none][0m
+[0m[1mrandom_password.db: Refreshing state... [id=none][0m
+[0m[1mdata.tls_certificate.github_actions: Read complete after 1s [id=f14a3ee4f847b00a69e565d9b60917218c94d428][0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Reading...[0m[0m
+[0m[1maws_vpc.main: Refreshing state... [id=vpc-01fe6dad7da67901a][0m
+[0m[1maws_ssm_parameter.db_name: Refreshing state... [id=/tkt-dev/db/name][0m
+[0m[1maws_secretsmanager_secret.db_password: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/db-password-9m4ig1][0m
+[0m[1maws_ssm_parameter.db_user: Refreshing state... [id=/tkt-dev/db/username][0m
+[0m[1mdata.aws_iam_policy_document.lambda_assume: Reading...[0m[0m
+[0m[1maws_iam_openid_connect_provider.github_actions: Refreshing state... [id=arn:aws:iam::135274608372:oidc-provider/token.actions.githubusercontent.com][0m
+[0m[1maws_s3_bucket.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_ecr_repository.app: Refreshing state... [id=tkt-dev-ticketdesk][0m
+[0m[1maws_ecr_repository.lambda_thumbnail: Refreshing state... [id=tkt-dev-thumbnail-lambda][0m
+[0m[1mdata.aws_iam_policy_document.lambda_assume: Read complete after 0s [id=2690255455][0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Read complete after 0s [id=1077804475][0m
+[0m[1maws_iam_user.github_actions_deploy: Refreshing state... [id=tkt-dev-github-actions-deploy][0m
+[0m[1maws_ecs_cluster.main: Refreshing state... [id=arn:aws:ecs:us-east-1:135274608372:cluster/tkt-dev-cluster][0m
+[0m[1maws_secretsmanager_secret.jwt_secret: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/jwt-secret-HFm1YN][0m
+[0m[1maws_sns_topic.alerts: Refreshing state... [id=arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts][0m
+[0m[1mdata.aws_availability_zones.available: Reading...[0m[0m
+[0m[1maws_cloudwatch_log_group.lambda_thumbnail: Refreshing state... [id=/aws/lambda/tkt-dev-thumbnail][0m
+[0m[1maws_s3_bucket.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_cloudwatch_log_group.app: Refreshing state... [id=/ecs/tkt-dev-ticketdesk][0m
+[0m[1mdata.aws_ec2_managed_prefix_list.s3: Reading...[0m[0m
+[0m[1maws_iam_role.lambda_thumbnail: Refreshing state... [id=tkt-dev-thumbnail-lambda-role][0m
+[0m[1maws_iam_role.task: Refreshing state... [id=tkt-dev-ecs-task-role][0m
+[0m[1maws_iam_role.execution: Refreshing state... [id=tkt-dev-ecs-execution-role][0m
+[0m[1maws_secretsmanager_secret_version.db_password: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/db-password-9m4ig1|terraform-20260814093912510800000004][0m
+[0m[1maws_iam_access_key.github_actions_deploy: Refreshing state... [id=[REDACTED-ACCESS-KEY-ID]][0m
+[0m[1mdata.aws_iam_policy_document.github_actions_assume: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.github_actions_assume: Read complete after 0s [id=2882689332][0m
+[0m[1maws_secretsmanager_secret_version.jwt_secret: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/jwt-secret-HFm1YN|terraform-20260814093911817500000003][0m
+[0m[1maws_sns_topic_subscription.alerts_email[0]: Refreshing state... [id=arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts:76a098c6-d828-41f7-bb29-d2ddfa2a69cb][0m
+[0m[1maws_iam_role.github_actions_deploy: Refreshing state... [id=tkt-dev-github-actions-deploy][0m
+[0m[1maws_iam_role_policy_attachment.execution_managed: Refreshing state... [id=tkt-dev-ecs-execution-role-20260814093913168900000005][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_s3_bucket_versioning.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_s3_bucket_public_access_block.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1mdata.aws_iam_policy_document.lambda_thumbnail_permissions: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.lambda_thumbnail_permissions: Read complete after 0s [id=4100854975][0m
+[0m[1mdata.aws_iam_policy_document.task_attachments: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.task_attachments: Read complete after 0s [id=1639559180][0m
+[0m[1maws_ssm_parameter.attachments_bucket: Refreshing state... [id=/tkt-dev/app/attachments-bucket][0m
+[0m[1maws_iam_role_policy.lambda_thumbnail: Refreshing state... [id=tkt-dev-thumbnail-lambda-role:tkt-dev-thumbnail-lambda-policy][0m
+[0m[1maws_iam_role_policy.task_attachments: Refreshing state... [id=tkt-dev-ecs-task-role:tkt-dev-ecs-task-attachments][0m
+[0m[1maws_s3_bucket_public_access_block.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1mdata.aws_iam_policy_document.frontend_bucket: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.frontend_bucket: Read complete after 0s [id=2726293701][0m
+[0m[1maws_s3_object.frontend_files["index.html"]: Refreshing state... [id=index.html][0m
+[0m[1maws_s3_object.frontend_files["app.js"]: Refreshing state... [id=app.js][0m
+[0m[1maws_s3_object.frontend_files["styles.css"]: Refreshing state... [id=styles.css][0m
+[0m[1maws_s3_bucket_website_configuration.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_s3_bucket_policy.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_ssm_parameter.cors_origins: Refreshing state... [id=/tkt-dev/app/cors-origins][0m
+[0m[1maws_s3_bucket_cors_configuration.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1mdata.aws_availability_zones.available: Read complete after 8s [id=us-east-1][0m
+[0m[1mdata.aws_ec2_managed_prefix_list.s3: Read complete after 8s [id=pl-63a5400a][0m
+[0m[1maws_subnet.public[1]: Refreshing state... [id=subnet-07412458c26ce091f][0m
+[0m[1maws_route_table.private: Refreshing state... [id=rtb-084c3221389f731cf][0m
+[0m[1maws_security_group.rds: Refreshing state... [id=sg-0135e84b1443a5544][0m
+[0m[1maws_lb_target_group.app: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:targetgroup/tkt-dev-tg/4db0d0bb6e8e4c43][0m
+[0m[1maws_internet_gateway.main: Refreshing state... [id=igw-0082e6a3414a767c3][0m
+[0m[1maws_security_group.vpc_endpoints: Refreshing state... [id=sg-00d466111518e4d81][0m
+[0m[1maws_subnet.private[0]: Refreshing state... [id=subnet-0a35bc71ab81accce][0m
+[0m[1maws_subnet.public[0]: Refreshing state... [id=subnet-078f0c849754f1a93][0m
+[0m[1maws_security_group.alb: Refreshing state... [id=sg-0058b68ce948fb2ff][0m
+[0m[1maws_subnet.private[1]: Refreshing state... [id=subnet-022b67b93e6f84308][0m
+[0m[1maws_security_group.ecs_task: Refreshing state... [id=sg-0c30748834a38dac1][0m
+[0m[1maws_vpc_endpoint.s3: Refreshing state... [id=vpce-074186dceea9dc467][0m
+[0m[1maws_route_table.public: Refreshing state... [id=rtb-0ff0802ce9dcae1cd][0m
+[0m[1maws_vpc_security_group_ingress_rule.alb_http_in: Refreshing state... [id=sgr-05833a95483fd68ee][0m
+[0m[1maws_lb.main: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:loadbalancer/app/tkt-dev-alb/74757fd80c50cbc9][0m
+[0m[1maws_vpc_security_group_ingress_rule.ecs_from_alb: Refreshing state... [id=sgr-09d2a1fdf6b46a8f1][0m
+[0m[1maws_vpc_security_group_ingress_rule.rds_from_ecs: Refreshing state... [id=sgr-048292125accbacfa][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_rds: Refreshing state... [id=sgr-07a095af9a4bfc20c][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_s3_gateway: Refreshing state... [id=sgr-02b61673ca144f52f][0m
+[0m[1maws_vpc_security_group_ingress_rule.vpce_from_ecs: Refreshing state... [id=sgr-0a73d00473515c04b][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_vpce: Refreshing state... [id=sgr-01b930c43c96a3712][0m
+[0m[1maws_vpc_security_group_egress_rule.alb_to_ecs: Refreshing state... [id=sgr-0c6c653249eccd370][0m
+[0m[1maws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0061df6d8a9e19352][0m
+[0m[1maws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-011359657c6ca17a8][0m
+[0m[1maws_db_subnet_group.main: Refreshing state... [id=tkt-dev-db-subnets][0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Refreshing state... [id=vpce-04d212629d1fdfc62][0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Refreshing state... [id=vpce-072eec7e2d3fbffda][0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Refreshing state... [id=vpce-038a067f233ac184d][0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Refreshing state... [id=vpce-049b02b21f4bc8ddd][0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Refreshing state... [id=vpce-04478bb2ebf3390c3][0m
+[0m[1maws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-0a0327bf7b22447d7][0m
+[0m[1maws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-0ea8b4562dac1dd38][0m
+[0m[1maws_s3_object.frontend_config: Refreshing state... [id=config.js][0m
+[0m[1maws_cloudwatch_metric_alarm.unhealthy_targets: Refreshing state... [id=tkt-dev-unhealthy-targets][0m
+[0m[1maws_cloudwatch_metric_alarm.high_5xx: Refreshing state... [id=tkt-dev-high-5xx][0m
+[0m[1maws_lb_listener.http: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:listener/app/tkt-dev-alb/74757fd80c50cbc9/04888220d72622b5][0m
+[0m[1maws_db_instance.main: Refreshing state... [id=db-42IUVRQIT7MAGJFR4TQV64SAGI][0m
+[0m[1maws_cloudwatch_metric_alarm.rds_high_cpu: Refreshing state... [id=tkt-dev-rds-high-cpu][0m
+[0m[1maws_ssm_parameter.db_port: Refreshing state... [id=/tkt-dev/db/port][0m
+[0m[1maws_ssm_parameter.db_host: Refreshing state... [id=/tkt-dev/db/host][0m
+[0m[1mdata.aws_iam_policy_document.execution_secrets: Reading...[0m[0m
+[0m[1maws_ecs_task_definition.app: Refreshing state... [id=tkt-dev-ticketdesk][0m
+[0m[1mdata.aws_iam_policy_document.execution_secrets: Read complete after 0s [id=651797212][0m
+[0m[1maws_iam_role_policy.execution_secrets: Refreshing state... [id=tkt-dev-ecs-execution-role:tkt-dev-ecs-execution-secrets][0m
+[0m[1maws_ecs_service.app: Refreshing state... [id=arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc][0m
+[0m[1maws_cloudwatch_dashboard.main: Refreshing state... [id=tkt-dev-ticketdesk][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+  [33m~[0m update in-place[0m
+[31m-[0m/[32m+[0m destroy and then create replacement[0m
+ [36m<=[0m read (data resources)[0m
+
+Terraform will perform the following actions:
+
+[1m  # data.aws_iam_policy_document.github_actions_deploy[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "github_actions_deploy" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:GetAuthorizationToken",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "ECRAuth"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:BatchCheckLayerAvailability",
+              [32m+[0m[0m "ecr:BatchGetImage",
+              [32m+[0m[0m "ecr:CompleteLayerUpload",
+              [32m+[0m[0m "ecr:DescribeImages",
+              [32m+[0m[0m "ecr:InitiateLayerUpload",
+              [32m+[0m[0m "ecr:PutImage",
+              [32m+[0m[0m "ecr:UploadLayerPart",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:ecr:us-east-1:135274608372:repository/tkt-dev-thumbnail-lambda",
+              [32m+[0m[0m "arn:aws:ecr:us-east-1:135274608372:repository/tkt-dev-ticketdesk",
+            ]
+          [32m+[0m[0m sid       = "ECRPush"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecs:DescribeTaskDefinition",
+              [32m+[0m[0m "ecs:RegisterTaskDefinition",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "ECSRegisterTaskDefinition"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecs:DescribeServices",
+              [32m+[0m[0m "ecs:UpdateService",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc",
+            ]
+          [32m+[0m[0m sid       = "ECSUpdateService"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "iam:PassRole",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:iam::135274608372:role/tkt-dev-ecs-execution-role",
+              [32m+[0m[0m "arn:aws:iam::135274608372:role/tkt-dev-ecs-task-role",
+            ]
+          [32m+[0m[0m sid       = "PassEcsRoles"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "lambda:GetFunction",
+              [32m+[0m[0m "lambda:GetFunctionConfiguration",
+              [32m+[0m[0m "lambda:UpdateFunctionCode",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "UpdateThumbnailLambda"
+        }
+    }
+
+[1m  # aws_ecs_service.app[0m will be updated in-place
+[0m  [33m~[0m[0m resource "aws_ecs_service" "app" {
+        id                                 = "arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc"
+        name                               = "tkt-dev-ticketdesk-svc"
+        tags                               = {
+            "Name" = "tkt-dev-ticketdesk-svc"
+        }
+      [33m~[0m[0m task_definition                    = "arn:aws:ecs:us-east-1:135274608372:task-definition/tkt-dev-ticketdesk:12" -> (known after apply)
+        [90m# (16 unchanged attributes hidden)[0m[0m
+
+        [90m# (4 unchanged blocks hidden)[0m[0m
+    }
+
+[1m  # aws_ecs_task_definition.app[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "aws_ecs_task_definition" "app" {
+      [33m~[0m[0m arn                      = "arn:aws:ecs:us-east-1:135274608372:task-definition/tkt-dev-ticketdesk:12" -> (known after apply)
+      [33m~[0m[0m arn_without_revision     = "arn:aws:ecs:us-east-1:135274608372:task-definition/tkt-dev-ticketdesk" -> (known after apply)
+      [33m~[0m[0m container_definitions    = jsonencode(
+          [33m~[0m[0m [
+              [33m~[0m[0m {
+                  [33m~[0m[0m image            = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-ticketdesk:5b85950" [33m->[0m[0m "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-ticketdesk:ff61c18"
+                  [31m-[0m[0m mountPoints      = []
+                    name             = "ticketdesk-api"
+                  [33m~[0m[0m portMappings     = [
+                      [33m~[0m[0m {
+                          [31m-[0m[0m hostPort      = 8080
+                            [90m# (2 unchanged attributes hidden)[0m[0m
+                        },
+                    ]
+                  [31m-[0m[0m systemControls   = []
+                  [31m-[0m[0m volumesFrom      = []
+                    [90m# (4 unchanged attributes hidden)[0m[0m
+                },
+            ] [31m# forces replacement[0m[0m
+        )
+      [33m~[0m[0m enable_fault_injection   = false -> (known after apply)
+      [33m~[0m[0m id                       = "tkt-dev-ticketdesk" -> (known after apply)
+      [33m~[0m[0m revision                 = 12 -> (known after apply)
+        tags                     = {
+            "Name" = "tkt-dev-ticketdesk-task"
+        }
+        [90m# (12 unchanged attributes hidden)[0m[0m
+    }
+
+[1m  # aws_iam_role_policy.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "github_actions_deploy" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = "tkt-dev-github-actions-deploy"
+    }
+
+[1m  # aws_iam_user_policy.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_user_policy" "github_actions_deploy" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m user        = "tkt-dev-github-actions-deploy"
+    }
+
+[1m  # aws_lambda_function.thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_function" "thumbnail" {
+      [32m+[0m[0m architectures                  = (known after apply)
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m code_sha256                    = (known after apply)
+      [32m+[0m[0m function_name                  = "tkt-dev-thumbnail"
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m image_uri                      = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda:ff61c18"
+      [32m+[0m[0m invoke_arn                     = (known after apply)
+      [32m+[0m[0m last_modified                  = (known after apply)
+      [32m+[0m[0m memory_size                    = 512
+      [32m+[0m[0m package_type                   = "Image"
+      [32m+[0m[0m publish                        = false
+      [32m+[0m[0m qualified_arn                  = (known after apply)
+      [32m+[0m[0m qualified_invoke_arn           = (known after apply)
+      [32m+[0m[0m reserved_concurrent_executions = -1
+      [32m+[0m[0m role                           = "arn:aws:iam::135274608372:role/tkt-dev-thumbnail-lambda-role"
+      [32m+[0m[0m signing_job_arn                = (known after apply)
+      [32m+[0m[0m signing_profile_version_arn    = (known after apply)
+      [32m+[0m[0m skip_destroy                   = false
+      [32m+[0m[0m source_code_hash               = (known after apply)
+      [32m+[0m[0m source_code_size               = (known after apply)
+      [32m+[0m[0m tags                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-thumbnail"
+        }
+      [32m+[0m[0m tags_all                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-thumbnail"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m timeout                        = 30
+      [32m+[0m[0m version                        = (known after apply)
+
+      [32m+[0m[0m ephemeral_storage (known after apply)
+
+      [32m+[0m[0m logging_config (known after apply)
+
+      [32m+[0m[0m tracing_config (known after apply)
+    }
+
+[1m  # aws_lambda_permission.allow_s3[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_permission" "allow_s3" {
+      [32m+[0m[0m action              = "lambda:InvokeFunction"
+      [32m+[0m[0m function_name       = "tkt-dev-thumbnail"
+      [32m+[0m[0m id                  = (known after apply)
+      [32m+[0m[0m principal           = "s3.amazonaws.com"
+      [32m+[0m[0m source_arn          = "arn:aws:s3:::tkt-dev-attachments"
+      [32m+[0m[0m statement_id        = "AllowS3Invoke"
+      [32m+[0m[0m statement_id_prefix = (known after apply)
+    }
+
+[1m  # aws_s3_bucket_notification.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_notification" "attachments" {
+      [32m+[0m[0m bucket      = "tkt-dev-attachments"
+      [32m+[0m[0m eventbridge = false
+      [32m+[0m[0m id          = (known after apply)
+
+      [32m+[0m[0m lambda_function {
+          [32m+[0m[0m events              = [
+              [32m+[0m[0m "s3:ObjectCreated:*",
+            ]
+          [32m+[0m[0m filter_prefix       = "attachments/"
+          [32m+[0m[0m id                  = (known after apply)
+          [32m+[0m[0m lambda_function_arn = (known after apply)
+        }
+    }
+
+[1mPlan:[0m [0m6 to add, 1 to change, 1 to destroy.
+[0m[1maws_ecs_task_definition.app: Destroying... [id=tkt-dev-ticketdesk][0m[0m
+[0m[1maws_lambda_function.thumbnail: Creating...[0m[0m
+[0m[1maws_ecs_task_definition.app: Destruction complete after 1s[0m
+[0m[1maws_ecs_task_definition.app: Creating...[0m[0m
+[0m[1maws_ecs_task_definition.app: Creation complete after 1s [id=tkt-dev-ticketdesk][0m
+[0m[1maws_ecs_service.app: Modifying... [id=arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc][0m[0m
+[0m[1maws_ecs_service.app: Modifications complete after 2s [id=arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc][0m
+[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mcreating Lambda Function (tkt-dev-thumbnail): operation error Lambda: CreateFunction, https response error StatusCode: 400, RequestID: 8a5bf4a2-b516-4821-b168-eea27680239a, InvalidParameterValueException: The image manifest, config or layer media type for the source image 135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda:ff61c18 is not supported.[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m  with aws_lambda_function.thumbnail,
+[31m│[0m [0m  on lambda_thumbnail.tf line 78, in resource "aws_lambda_function" "thumbnail":
+[31m│[0m [0m  78: resource "aws_lambda_function" "thumbnail" [4m{[0m[0m
+[31m│[0m [0m
+[31m╵[0m[0m
+Releasing state lock. This may take a few moments...
+exit code: 1
+=== Retry apply after fixing lambda image manifest at 2026-08-14T11:44:53Z ===
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mDeprecated Parameter[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+[33m│[0m [0minstead.
+[33m╵[0m[0m
+Acquiring state lock. This may take a few moments...
+[0m[1mrandom_password.jwt_secret: Refreshing state... [id=none][0m
+[0m[1mrandom_password.db: Refreshing state... [id=none][0m
+[0m[1mdata.tls_certificate.github_actions: Reading...[0m[0m
+[0m[1mdata.tls_certificate.github_actions: Read complete after 1s [id=f14a3ee4f847b00a69e565d9b60917218c94d428][0m
+[0m[1maws_cloudwatch_log_group.lambda_thumbnail: Refreshing state... [id=/aws/lambda/tkt-dev-thumbnail][0m
+[0m[1maws_ecr_repository.lambda_thumbnail: Refreshing state... [id=tkt-dev-thumbnail-lambda][0m
+[0m[1mdata.aws_ec2_managed_prefix_list.s3: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.lambda_assume: Reading...[0m[0m
+[0m[1maws_ssm_parameter.db_user: Refreshing state... [id=/tkt-dev/db/username][0m
+[0m[1mdata.aws_availability_zones.available: Reading...[0m[0m
+[0m[1maws_secretsmanager_secret.jwt_secret: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/jwt-secret-HFm1YN][0m
+[0m[1maws_vpc.main: Refreshing state... [id=vpc-01fe6dad7da67901a][0m
+[0m[1maws_iam_user.github_actions_deploy: Refreshing state... [id=tkt-dev-github-actions-deploy][0m
+[0m[1maws_iam_openid_connect_provider.github_actions: Refreshing state... [id=arn:aws:iam::135274608372:oidc-provider/token.actions.githubusercontent.com][0m
+[0m[1mdata.aws_iam_policy_document.lambda_assume: Read complete after 0s [id=2690255455][0m
+[0m[1maws_secretsmanager_secret.db_password: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/db-password-9m4ig1][0m
+[0m[1maws_ecs_cluster.main: Refreshing state... [id=arn:aws:ecs:us-east-1:135274608372:cluster/tkt-dev-cluster][0m
+[0m[1mdata.aws_availability_zones.available: Read complete after 1s [id=us-east-1][0m
+[0m[1maws_cloudwatch_log_group.app: Refreshing state... [id=/ecs/tkt-dev-ticketdesk][0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Read complete after 0s [id=1077804475][0m
+[0m[1maws_ssm_parameter.db_name: Refreshing state... [id=/tkt-dev/db/name][0m
+[0m[1maws_s3_bucket.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_ecr_repository.app: Refreshing state... [id=tkt-dev-ticketdesk][0m
+[0m[1mdata.aws_ec2_managed_prefix_list.s3: Read complete after 2s [id=pl-63a5400a][0m
+[0m[1maws_s3_bucket.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_sns_topic.alerts: Refreshing state... [id=arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts][0m
+[0m[1maws_iam_role.lambda_thumbnail: Refreshing state... [id=tkt-dev-thumbnail-lambda-role][0m
+[0m[1maws_secretsmanager_secret_version.jwt_secret: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/jwt-secret-HFm1YN|terraform-20260814093911817500000003][0m
+[0m[1maws_iam_access_key.github_actions_deploy: Refreshing state... [id=[REDACTED-ACCESS-KEY-ID]][0m
+[0m[1maws_iam_role.execution: Refreshing state... [id=tkt-dev-ecs-execution-role][0m
+[0m[1maws_iam_role.task: Refreshing state... [id=tkt-dev-ecs-task-role][0m
+[0m[1mdata.aws_iam_policy_document.github_actions_assume: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.github_actions_assume: Read complete after 0s [id=2882689332][0m
+[0m[1maws_secretsmanager_secret_version.db_password: Refreshing state... [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/db-password-9m4ig1|terraform-20260814093912510800000004][0m
+[0m[1maws_iam_role.github_actions_deploy: Refreshing state... [id=tkt-dev-github-actions-deploy][0m
+[0m[1maws_sns_topic_subscription.alerts_email[0]: Refreshing state... [id=arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts:76a098c6-d828-41f7-bb29-d2ddfa2a69cb][0m
+[0m[1maws_security_group.rds: Refreshing state... [id=sg-0135e84b1443a5544][0m
+[0m[1maws_subnet.public[0]: Refreshing state... [id=subnet-078f0c849754f1a93][0m
+[0m[1maws_security_group.vpc_endpoints: Refreshing state... [id=sg-00d466111518e4d81][0m
+[0m[1maws_subnet.public[1]: Refreshing state... [id=subnet-07412458c26ce091f][0m
+[0m[1maws_security_group.ecs_task: Refreshing state... [id=sg-0c30748834a38dac1][0m
+[0m[1maws_lb_target_group.app: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:targetgroup/tkt-dev-tg/4db0d0bb6e8e4c43][0m
+[0m[1maws_security_group.alb: Refreshing state... [id=sg-0058b68ce948fb2ff][0m
+[0m[1maws_route_table.private: Refreshing state... [id=rtb-084c3221389f731cf][0m
+[0m[1maws_internet_gateway.main: Refreshing state... [id=igw-0082e6a3414a767c3][0m
+[0m[1maws_subnet.private[0]: Refreshing state... [id=subnet-0a35bc71ab81accce][0m
+[0m[1maws_subnet.private[1]: Refreshing state... [id=subnet-022b67b93e6f84308][0m
+[0m[1maws_iam_role_policy_attachment.execution_managed: Refreshing state... [id=tkt-dev-ecs-execution-role-20260814093913168900000005][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_s3_gateway: Refreshing state... [id=sgr-02b61673ca144f52f][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_rds: Refreshing state... [id=sgr-07a095af9a4bfc20c][0m
+[0m[1maws_vpc_security_group_ingress_rule.vpce_from_ecs: Refreshing state... [id=sgr-0a73d00473515c04b][0m
+[0m[1maws_vpc_security_group_ingress_rule.rds_from_ecs: Refreshing state... [id=sgr-048292125accbacfa][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_vpce: Refreshing state... [id=sgr-01b930c43c96a3712][0m
+[0m[1maws_vpc_security_group_egress_rule.alb_to_ecs: Refreshing state... [id=sgr-0c6c653249eccd370][0m
+[0m[1maws_vpc_security_group_ingress_rule.alb_http_in: Refreshing state... [id=sgr-05833a95483fd68ee][0m
+[0m[1maws_vpc_security_group_ingress_rule.ecs_from_alb: Refreshing state... [id=sgr-09d2a1fdf6b46a8f1][0m
+[0m[1maws_lb.main: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:loadbalancer/app/tkt-dev-alb/74757fd80c50cbc9][0m
+[0m[1maws_route_table.public: Refreshing state... [id=rtb-0ff0802ce9dcae1cd][0m
+[0m[1maws_vpc_endpoint.s3: Refreshing state... [id=vpce-074186dceea9dc467][0m
+[0m[1maws_db_subnet_group.main: Refreshing state... [id=tkt-dev-db-subnets][0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Refreshing state... [id=vpce-038a067f233ac184d][0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Refreshing state... [id=vpce-04d212629d1fdfc62][0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Refreshing state... [id=vpce-04478bb2ebf3390c3][0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Refreshing state... [id=vpce-072eec7e2d3fbffda][0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Refreshing state... [id=vpce-049b02b21f4bc8ddd][0m
+[0m[1maws_route_table_association.private[0]: Refreshing state... [id=rtbassoc-0ea8b4562dac1dd38][0m
+[0m[1maws_route_table_association.private[1]: Refreshing state... [id=rtbassoc-0a0327bf7b22447d7][0m
+[0m[1maws_route_table_association.public[0]: Refreshing state... [id=rtbassoc-0061df6d8a9e19352][0m
+[0m[1maws_route_table_association.public[1]: Refreshing state... [id=rtbassoc-011359657c6ca17a8][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1mdata.aws_iam_policy_document.task_attachments: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.task_attachments: Read complete after 0s [id=1639559180][0m
+[0m[1maws_s3_bucket_versioning.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_ssm_parameter.attachments_bucket: Refreshing state... [id=/tkt-dev/app/attachments-bucket][0m
+[0m[1mdata.aws_iam_policy_document.lambda_thumbnail_permissions: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.lambda_thumbnail_permissions: Read complete after 0s [id=4100854975][0m
+[0m[1maws_s3_bucket_public_access_block.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_cloudwatch_metric_alarm.unhealthy_targets: Refreshing state... [id=tkt-dev-unhealthy-targets][0m
+[0m[1maws_lb_listener.http: Refreshing state... [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:listener/app/tkt-dev-alb/74757fd80c50cbc9/04888220d72622b5][0m
+[0m[1maws_cloudwatch_metric_alarm.high_5xx: Refreshing state... [id=tkt-dev-high-5xx][0m
+[0m[1mdata.aws_iam_policy_document.frontend_bucket: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.frontend_bucket: Read complete after 0s [id=2726293701][0m
+[0m[1maws_s3_bucket_public_access_block.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_s3_object.frontend_config: Refreshing state... [id=config.js][0m
+[0m[1maws_s3_bucket_website_configuration.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_s3_object.frontend_files["styles.css"]: Refreshing state... [id=styles.css][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_s3_object.frontend_files["app.js"]: Refreshing state... [id=app.js][0m
+[0m[1maws_s3_object.frontend_files["index.html"]: Refreshing state... [id=index.html][0m
+[0m[1maws_db_instance.main: Refreshing state... [id=db-42IUVRQIT7MAGJFR4TQV64SAGI][0m
+[0m[1maws_iam_role_policy.task_attachments: Refreshing state... [id=tkt-dev-ecs-task-role:tkt-dev-ecs-task-attachments][0m
+[0m[1maws_iam_role_policy.lambda_thumbnail: Refreshing state... [id=tkt-dev-thumbnail-lambda-role:tkt-dev-thumbnail-lambda-policy][0m
+[0m[1maws_s3_bucket_policy.frontend: Refreshing state... [id=tkt-dev-frontend][0m
+[0m[1maws_s3_bucket_cors_configuration.attachments: Refreshing state... [id=tkt-dev-attachments][0m
+[0m[1maws_ssm_parameter.cors_origins: Refreshing state... [id=/tkt-dev/app/cors-origins][0m
+[0m[1maws_cloudwatch_metric_alarm.rds_high_cpu: Refreshing state... [id=tkt-dev-rds-high-cpu][0m
+[0m[1maws_ssm_parameter.db_host: Refreshing state... [id=/tkt-dev/db/host][0m
+[0m[1maws_ssm_parameter.db_port: Refreshing state... [id=/tkt-dev/db/port][0m
+[0m[1mdata.aws_iam_policy_document.execution_secrets: Reading...[0m[0m
+[0m[1maws_ecs_task_definition.app: Refreshing state... [id=tkt-dev-ticketdesk][0m
+[0m[1mdata.aws_iam_policy_document.execution_secrets: Read complete after 0s [id=651797212][0m
+[0m[1maws_iam_role_policy.execution_secrets: Refreshing state... [id=tkt-dev-ecs-execution-role:tkt-dev-ecs-execution-secrets][0m
+[0m[1maws_ecs_service.app: Refreshing state... [id=arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc][0m
+[0m[1maws_cloudwatch_dashboard.main: Refreshing state... [id=tkt-dev-ticketdesk][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+ [36m<=[0m read (data resources)[0m
+
+Terraform will perform the following actions:
+
+[1m  # data.aws_iam_policy_document.github_actions_deploy[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "github_actions_deploy" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:GetAuthorizationToken",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "ECRAuth"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:BatchCheckLayerAvailability",
+              [32m+[0m[0m "ecr:BatchGetImage",
+              [32m+[0m[0m "ecr:CompleteLayerUpload",
+              [32m+[0m[0m "ecr:DescribeImages",
+              [32m+[0m[0m "ecr:InitiateLayerUpload",
+              [32m+[0m[0m "ecr:PutImage",
+              [32m+[0m[0m "ecr:UploadLayerPart",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:ecr:us-east-1:135274608372:repository/tkt-dev-thumbnail-lambda",
+              [32m+[0m[0m "arn:aws:ecr:us-east-1:135274608372:repository/tkt-dev-ticketdesk",
+            ]
+          [32m+[0m[0m sid       = "ECRPush"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecs:DescribeTaskDefinition",
+              [32m+[0m[0m "ecs:RegisterTaskDefinition",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "ECSRegisterTaskDefinition"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecs:DescribeServices",
+              [32m+[0m[0m "ecs:UpdateService",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc",
+            ]
+          [32m+[0m[0m sid       = "ECSUpdateService"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "iam:PassRole",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "arn:aws:iam::135274608372:role/tkt-dev-ecs-execution-role",
+              [32m+[0m[0m "arn:aws:iam::135274608372:role/tkt-dev-ecs-task-role",
+            ]
+          [32m+[0m[0m sid       = "PassEcsRoles"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "lambda:GetFunction",
+              [32m+[0m[0m "lambda:GetFunctionConfiguration",
+              [32m+[0m[0m "lambda:UpdateFunctionCode",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "UpdateThumbnailLambda"
+        }
+    }
+
+[1m  # aws_iam_role_policy.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "github_actions_deploy" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = "tkt-dev-github-actions-deploy"
+    }
+
+[1m  # aws_iam_user_policy.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_user_policy" "github_actions_deploy" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m user        = "tkt-dev-github-actions-deploy"
+    }
+
+[1m  # aws_lambda_function.thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_function" "thumbnail" {
+      [32m+[0m[0m architectures                  = (known after apply)
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m code_sha256                    = (known after apply)
+      [32m+[0m[0m function_name                  = "tkt-dev-thumbnail"
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m image_uri                      = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda:ff61c18"
+      [32m+[0m[0m invoke_arn                     = (known after apply)
+      [32m+[0m[0m last_modified                  = (known after apply)
+      [32m+[0m[0m memory_size                    = 512
+      [32m+[0m[0m package_type                   = "Image"
+      [32m+[0m[0m publish                        = false
+      [32m+[0m[0m qualified_arn                  = (known after apply)
+      [32m+[0m[0m qualified_invoke_arn           = (known after apply)
+      [32m+[0m[0m reserved_concurrent_executions = -1
+      [32m+[0m[0m role                           = "arn:aws:iam::135274608372:role/tkt-dev-thumbnail-lambda-role"
+      [32m+[0m[0m signing_job_arn                = (known after apply)
+      [32m+[0m[0m signing_profile_version_arn    = (known after apply)
+      [32m+[0m[0m skip_destroy                   = false
+      [32m+[0m[0m source_code_hash               = (known after apply)
+      [32m+[0m[0m source_code_size               = (known after apply)
+      [32m+[0m[0m tags                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-thumbnail"
+        }
+      [32m+[0m[0m tags_all                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-thumbnail"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m timeout                        = 30
+      [32m+[0m[0m version                        = (known after apply)
+
+      [32m+[0m[0m ephemeral_storage (known after apply)
+
+      [32m+[0m[0m logging_config (known after apply)
+
+      [32m+[0m[0m tracing_config (known after apply)
+    }
+
+[1m  # aws_lambda_permission.allow_s3[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_permission" "allow_s3" {
+      [32m+[0m[0m action              = "lambda:InvokeFunction"
+      [32m+[0m[0m function_name       = "tkt-dev-thumbnail"
+      [32m+[0m[0m id                  = (known after apply)
+      [32m+[0m[0m principal           = "s3.amazonaws.com"
+      [32m+[0m[0m source_arn          = "arn:aws:s3:::tkt-dev-attachments"
+      [32m+[0m[0m statement_id        = "AllowS3Invoke"
+      [32m+[0m[0m statement_id_prefix = (known after apply)
+    }
+
+[1m  # aws_s3_bucket_notification.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_notification" "attachments" {
+      [32m+[0m[0m bucket      = "tkt-dev-attachments"
+      [32m+[0m[0m eventbridge = false
+      [32m+[0m[0m id          = (known after apply)
+
+      [32m+[0m[0m lambda_function {
+          [32m+[0m[0m events              = [
+              [32m+[0m[0m "s3:ObjectCreated:*",
+            ]
+          [32m+[0m[0m filter_prefix       = "attachments/"
+          [32m+[0m[0m id                  = (known after apply)
+          [32m+[0m[0m lambda_function_arn = (known after apply)
+        }
+    }
+
+[1mPlan:[0m [0m5 to add, 0 to change, 0 to destroy.
+[0m[1maws_lambda_function.thumbnail: Creating...[0m[0m
+[0m[1maws_lambda_function.thumbnail: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_lambda_function.thumbnail: Creation complete after 13s [id=tkt-dev-thumbnail][0m
+[0m[1maws_lambda_permission.allow_s3: Creating...[0m[0m
+[0m[1mdata.aws_iam_policy_document.github_actions_deploy: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.github_actions_deploy: Read complete after 0s [id=2397437137][0m
+[0m[1maws_iam_role_policy.github_actions_deploy: Creating...[0m[0m
+[0m[1maws_iam_user_policy.github_actions_deploy: Creating...[0m[0m
+[0m[1maws_lambda_permission.allow_s3: Creation complete after 1s [id=AllowS3Invoke][0m
+[0m[1maws_s3_bucket_notification.attachments: Creating...[0m[0m
+[0m[1maws_iam_user_policy.github_actions_deploy: Creation complete after 2s [id=tkt-dev-github-actions-deploy:tkt-dev-github-actions-deploy][0m
+[0m[1maws_iam_role_policy.github_actions_deploy: Creation complete after 2s [id=tkt-dev-github-actions-deploy:tkt-dev-github-actions-deploy][0m
+[0m[1maws_s3_bucket_notification.attachments: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_s3_bucket_notification.attachments: Creation complete after 10s [id=tkt-dev-attachments][0m
+Releasing state lock. This may take a few moments...
+[0m[1m[32m
+Apply complete! Resources: 5 added, 0 changed, 0 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0malb_dns_name = "http://tkt-dev-alb-703765927.us-east-1.elb.amazonaws.com"
+attachments_bucket = "tkt-dev-attachments"
+aws_region = "us-east-1"
+cloudwatch_dashboard_url = "https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=tkt-dev-ticketdesk"
+cloudwatch_log_group = "/ecs/tkt-dev-ticketdesk"
+db_endpoint = <sensitive>
+ecr_repository_url = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-ticketdesk"
+ecs_cluster_name = "tkt-dev-cluster"
+ecs_service_name = "tkt-dev-ticketdesk-svc"
+environment = "dev"
+frontend_bucket = "tkt-dev-frontend"
+frontend_url = "http://tkt-dev-frontend.s3-website-us-east-1.amazonaws.com"
+github_actions_access_key_id = <sensitive>
+github_actions_role_arn = "arn:aws:iam::135274608372:role/tkt-dev-github-actions-deploy"
+github_actions_secret_access_key = <sensitive>
+lambda_thumbnail_ecr_repository_url = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda"
+lambda_thumbnail_function_name = "tkt-dev-thumbnail"
+sns_alerts_topic_arn = "arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts"
+target_group_arn = "arn:aws:elasticloadbalancing:us-east-1:135274608372:targetgroup/tkt-dev-tg/4db0d0bb6e8e4c43"
+vpc_id = "vpc-01fe6dad7da67901a"
+exit code: 0

@@ -1,0 +1,2744 @@
+=== Starting terraform apply from zero at 2026-08-14T09:38:33Z ===
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mDeprecated Parameter[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe parameter "dynamodb_table" is deprecated. Use parameter "use_lockfile"
+[33m│[0m [0minstead.
+[33m╵[0m[0m
+Acquiring state lock. This may take a few moments...
+[0m[1mdata.tls_certificate.github_actions: Reading...[0m[0m
+[0m[1mdata.tls_certificate.github_actions: Read complete after 1s [id=f14a3ee4f847b00a69e565d9b60917218c94d428][0m
+[0m[1mdata.aws_iam_policy_document.lambda_assume: Reading...[0m[0m
+[0m[1mdata.aws_availability_zones.available: Reading...[0m[0m
+[0m[1mdata.aws_ec2_managed_prefix_list.s3: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.lambda_assume: Read complete after 0s [id=2690255455][0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.ecs_assume: Read complete after 0s [id=1077804475][0m
+[0m[1mdata.aws_availability_zones.available: Read complete after 2s [id=us-east-1][0m
+[0m[1mdata.aws_ec2_managed_prefix_list.s3: Read complete after 2s [id=pl-63a5400a][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+ [36m<=[0m read (data resources)[0m
+
+Terraform will perform the following actions:
+
+[1m  # data.aws_iam_policy_document.execution_secrets[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "execution_secrets" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "secretsmanager:GetSecretValue",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ReadSecrets"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ssm:GetParameters",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ReadAppParameters"
+        }
+    }
+
+[1m  # data.aws_iam_policy_document.frontend_bucket[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "frontend_bucket" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:GetObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "PublicReadOnly"
+
+          [32m+[0m[0m principals {
+              [32m+[0m[0m identifiers = [
+                  [32m+[0m[0m "*",
+                ]
+              [32m+[0m[0m type        = "*"
+            }
+        }
+    }
+
+[1m  # data.aws_iam_policy_document.github_actions_assume[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "github_actions_assume" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions = [
+              [32m+[0m[0m "sts:AssumeRoleWithWebIdentity",
+            ]
+
+          [32m+[0m[0m condition {
+              [32m+[0m[0m test     = "StringEquals"
+              [32m+[0m[0m values   = [
+                  [32m+[0m[0m "dbhumeera-svg/TicketBase-main",
+                ]
+              [32m+[0m[0m variable = "token.actions.githubusercontent.com:repository"
+            }
+          [32m+[0m[0m condition {
+              [32m+[0m[0m test     = "StringEquals"
+              [32m+[0m[0m values   = [
+                  [32m+[0m[0m "sts.amazonaws.com",
+                ]
+              [32m+[0m[0m variable = "token.actions.githubusercontent.com:aud"
+            }
+          [32m+[0m[0m condition {
+              [32m+[0m[0m test     = "StringLike"
+              [32m+[0m[0m values   = [
+                  [32m+[0m[0m "dbhumeera-svg/TicketBase-main/.github/workflows/*",
+                ]
+              [32m+[0m[0m variable = "token.actions.githubusercontent.com:job_workflow_ref"
+            }
+
+          [32m+[0m[0m principals {
+              [32m+[0m[0m identifiers = [
+                  [32m+[0m[0m (known after apply),
+                ]
+              [32m+[0m[0m type        = "Federated"
+            }
+        }
+    }
+
+[1m  # data.aws_iam_policy_document.github_actions_deploy[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "github_actions_deploy" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:GetAuthorizationToken",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "ECRAuth"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecr:BatchCheckLayerAvailability",
+              [32m+[0m[0m "ecr:BatchGetImage",
+              [32m+[0m[0m "ecr:CompleteLayerUpload",
+              [32m+[0m[0m "ecr:DescribeImages",
+              [32m+[0m[0m "ecr:InitiateLayerUpload",
+              [32m+[0m[0m "ecr:PutImage",
+              [32m+[0m[0m "ecr:UploadLayerPart",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ECRPush"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecs:DescribeTaskDefinition",
+              [32m+[0m[0m "ecs:RegisterTaskDefinition",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m sid       = "ECSRegisterTaskDefinition"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "ecs:DescribeServices",
+              [32m+[0m[0m "ecs:UpdateService",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ECSUpdateService"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "iam:PassRole",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "PassEcsRoles"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "lambda:GetFunction",
+              [32m+[0m[0m "lambda:GetFunctionConfiguration",
+              [32m+[0m[0m "lambda:UpdateFunctionCode",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "UpdateThumbnailLambda"
+        }
+    }
+
+[1m  # data.aws_iam_policy_document.lambda_thumbnail_permissions[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "lambda_thumbnail_permissions" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:GetObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "ReadOriginal"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:PutObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "WriteThumbnail"
+        }
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "logs:CreateLogStream",
+              [32m+[0m[0m "logs:PutLogEvents",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "Logs"
+        }
+    }
+
+[1m  # data.aws_iam_policy_document.task_attachments[0m will be read during apply
+  # (config refers to values not yet known)
+[0m [36m<=[0m[0m data "aws_iam_policy_document" "task_attachments" {
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m json          = (known after apply)
+      [32m+[0m[0m minified_json = (known after apply)
+
+      [32m+[0m[0m statement {
+          [32m+[0m[0m actions   = [
+              [32m+[0m[0m "s3:GetObject",
+              [32m+[0m[0m "s3:PutObject",
+            ]
+          [32m+[0m[0m resources = [
+              [32m+[0m[0m (known after apply),
+            ]
+          [32m+[0m[0m sid       = "PresignedUploadsAndDownloads"
+        }
+    }
+
+[1m  # aws_cloudwatch_dashboard.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_dashboard" "main" {
+      [32m+[0m[0m dashboard_arn  = (known after apply)
+      [32m+[0m[0m dashboard_body = (known after apply)
+      [32m+[0m[0m dashboard_name = "tkt-dev-ticketdesk"
+      [32m+[0m[0m id             = (known after apply)
+    }
+
+[1m  # aws_cloudwatch_log_group.app[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_log_group" "app" {
+      [32m+[0m[0m arn               = (known after apply)
+      [32m+[0m[0m id                = (known after apply)
+      [32m+[0m[0m log_group_class   = (known after apply)
+      [32m+[0m[0m name              = "/ecs/tkt-dev-ticketdesk"
+      [32m+[0m[0m name_prefix       = (known after apply)
+      [32m+[0m[0m retention_in_days = 14
+      [32m+[0m[0m skip_destroy      = false
+      [32m+[0m[0m tags              = {
+          [32m+[0m[0m "Name" = "tkt-dev-ticketdesk-logs"
+        }
+      [32m+[0m[0m tags_all          = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ticketdesk-logs"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+    }
+
+[1m  # aws_cloudwatch_log_group.lambda_thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_log_group" "lambda_thumbnail" {
+      [32m+[0m[0m arn               = (known after apply)
+      [32m+[0m[0m id                = (known after apply)
+      [32m+[0m[0m log_group_class   = (known after apply)
+      [32m+[0m[0m name              = "/aws/lambda/tkt-dev-thumbnail"
+      [32m+[0m[0m name_prefix       = (known after apply)
+      [32m+[0m[0m retention_in_days = 14
+      [32m+[0m[0m skip_destroy      = false
+      [32m+[0m[0m tags              = {
+          [32m+[0m[0m "Name" = "tkt-dev-thumbnail-logs"
+        }
+      [32m+[0m[0m tags_all          = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-thumbnail-logs"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+    }
+
+[1m  # aws_cloudwatch_metric_alarm.high_5xx[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "high_5xx" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_actions                         = (known after apply)
+      [32m+[0m[0m alarm_description                     = "TicketDesk API is returning 5xx responses"
+      [32m+[0m[0m alarm_name                            = "tkt-dev-high-5xx"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 1
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "HTTPCode_Target_5XX_Count"
+      [32m+[0m[0m namespace                             = "AWS/ApplicationELB"
+      [32m+[0m[0m ok_actions                            = (known after apply)
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m statistic                             = "Sum"
+      [32m+[0m[0m tags                                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-high-5xx"
+        }
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-high-5xx"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m threshold                             = 5
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # aws_cloudwatch_metric_alarm.rds_high_cpu[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "rds_high_cpu" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_actions                         = (known after apply)
+      [32m+[0m[0m alarm_description                     = "RDS CPU utilization is sustained above 80%"
+      [32m+[0m[0m alarm_name                            = "tkt-dev-rds-high-cpu"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 3
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "CPUUtilization"
+      [32m+[0m[0m namespace                             = "AWS/RDS"
+      [32m+[0m[0m ok_actions                            = (known after apply)
+      [32m+[0m[0m period                                = 300
+      [32m+[0m[0m statistic                             = "Average"
+      [32m+[0m[0m tags                                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-rds-high-cpu"
+        }
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-rds-high-cpu"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m threshold                             = 80
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # aws_cloudwatch_metric_alarm.unhealthy_targets[0m will be created
+[0m  [32m+[0m[0m resource "aws_cloudwatch_metric_alarm" "unhealthy_targets" {
+      [32m+[0m[0m actions_enabled                       = true
+      [32m+[0m[0m alarm_actions                         = (known after apply)
+      [32m+[0m[0m alarm_description                     = "One or more ECS tasks are failing the ALB health check"
+      [32m+[0m[0m alarm_name                            = "tkt-dev-unhealthy-targets"
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m comparison_operator                   = "GreaterThanThreshold"
+      [32m+[0m[0m dimensions                            = (known after apply)
+      [32m+[0m[0m evaluate_low_sample_count_percentiles = (known after apply)
+      [32m+[0m[0m evaluation_periods                    = 2
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m metric_name                           = "UnHealthyHostCount"
+      [32m+[0m[0m namespace                             = "AWS/ApplicationELB"
+      [32m+[0m[0m ok_actions                            = (known after apply)
+      [32m+[0m[0m period                                = 60
+      [32m+[0m[0m statistic                             = "Maximum"
+      [32m+[0m[0m tags                                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-unhealthy-targets"
+        }
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-unhealthy-targets"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m threshold                             = 0
+      [32m+[0m[0m treat_missing_data                    = "notBreaching"
+    }
+
+[1m  # aws_db_instance.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_db_instance" "main" {
+      [32m+[0m[0m address                               = (known after apply)
+      [32m+[0m[0m allocated_storage                     = 20
+      [32m+[0m[0m apply_immediately                     = false
+      [32m+[0m[0m arn                                   = (known after apply)
+      [32m+[0m[0m auto_minor_version_upgrade            = true
+      [32m+[0m[0m availability_zone                     = (known after apply)
+      [32m+[0m[0m backup_retention_period               = 1
+      [32m+[0m[0m backup_target                         = (known after apply)
+      [32m+[0m[0m backup_window                         = (known after apply)
+      [32m+[0m[0m ca_cert_identifier                    = (known after apply)
+      [32m+[0m[0m character_set_name                    = (known after apply)
+      [32m+[0m[0m copy_tags_to_snapshot                 = false
+      [32m+[0m[0m database_insights_mode                = (known after apply)
+      [32m+[0m[0m db_name                               = "ticketdesk"
+      [32m+[0m[0m db_subnet_group_name                  = "tkt-dev-db-subnets"
+      [32m+[0m[0m dedicated_log_volume                  = false
+      [32m+[0m[0m delete_automated_backups              = true
+      [32m+[0m[0m deletion_protection                   = false
+      [32m+[0m[0m domain_fqdn                           = (known after apply)
+      [32m+[0m[0m endpoint                              = (known after apply)
+      [32m+[0m[0m engine                                = "postgres"
+      [32m+[0m[0m engine_lifecycle_support              = (known after apply)
+      [32m+[0m[0m engine_version                        = (known after apply)
+      [32m+[0m[0m engine_version_actual                 = (known after apply)
+      [32m+[0m[0m hosted_zone_id                        = (known after apply)
+      [32m+[0m[0m id                                    = (known after apply)
+      [32m+[0m[0m identifier                            = "tkt-dev-db"
+      [32m+[0m[0m identifier_prefix                     = (known after apply)
+      [32m+[0m[0m instance_class                        = "db.t3.micro"
+      [32m+[0m[0m iops                                  = (known after apply)
+      [32m+[0m[0m kms_key_id                            = (known after apply)
+      [32m+[0m[0m latest_restorable_time                = (known after apply)
+      [32m+[0m[0m license_model                         = (known after apply)
+      [32m+[0m[0m listener_endpoint                     = (known after apply)
+      [32m+[0m[0m maintenance_window                    = (known after apply)
+      [32m+[0m[0m master_user_secret                    = (known after apply)
+      [32m+[0m[0m master_user_secret_kms_key_id         = (known after apply)
+      [32m+[0m[0m monitoring_interval                   = 0
+      [32m+[0m[0m monitoring_role_arn                   = (known after apply)
+      [32m+[0m[0m multi_az                              = false
+      [32m+[0m[0m nchar_character_set_name              = (known after apply)
+      [32m+[0m[0m network_type                          = (known after apply)
+      [32m+[0m[0m option_group_name                     = (known after apply)
+      [32m+[0m[0m parameter_group_name                  = (known after apply)
+      [32m+[0m[0m password                              = (sensitive value)
+      [32m+[0m[0m password_wo                           = (write-only attribute)
+      [32m+[0m[0m performance_insights_enabled          = false
+      [32m+[0m[0m performance_insights_kms_key_id       = (known after apply)
+      [32m+[0m[0m performance_insights_retention_period = (known after apply)
+      [32m+[0m[0m port                                  = (known after apply)
+      [32m+[0m[0m publicly_accessible                   = false
+      [32m+[0m[0m replica_mode                          = (known after apply)
+      [32m+[0m[0m replicas                              = (known after apply)
+      [32m+[0m[0m resource_id                           = (known after apply)
+      [32m+[0m[0m skip_final_snapshot                   = true
+      [32m+[0m[0m snapshot_identifier                   = (known after apply)
+      [32m+[0m[0m status                                = (known after apply)
+      [32m+[0m[0m storage_encrypted                     = true
+      [32m+[0m[0m storage_throughput                    = (known after apply)
+      [32m+[0m[0m storage_type                          = "gp2"
+      [32m+[0m[0m tags                                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-db"
+        }
+      [32m+[0m[0m tags_all                              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m timezone                              = (known after apply)
+      [32m+[0m[0m username                              = "ticketdesk_app"
+      [32m+[0m[0m vpc_security_group_ids                = (known after apply)
+    }
+
+[1m  # aws_db_subnet_group.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_db_subnet_group" "main" {
+      [32m+[0m[0m arn                     = (known after apply)
+      [32m+[0m[0m description             = "Managed by Terraform"
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m name                    = "tkt-dev-db-subnets"
+      [32m+[0m[0m name_prefix             = (known after apply)
+      [32m+[0m[0m subnet_ids              = (known after apply)
+      [32m+[0m[0m supported_network_types = (known after apply)
+      [32m+[0m[0m tags                    = {
+          [32m+[0m[0m "Name" = "tkt-dev-db-subnets"
+        }
+      [32m+[0m[0m tags_all                = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db-subnets"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                  = (known after apply)
+    }
+
+[1m  # aws_ecr_repository.app[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecr_repository" "app" {
+      [32m+[0m[0m arn                  = (known after apply)
+      [32m+[0m[0m force_delete         = true
+      [32m+[0m[0m id                   = (known after apply)
+      [32m+[0m[0m image_tag_mutability = "IMMUTABLE"
+      [32m+[0m[0m name                 = "tkt-dev-ticketdesk"
+      [32m+[0m[0m registry_id          = (known after apply)
+      [32m+[0m[0m repository_url       = (known after apply)
+      [32m+[0m[0m tags                 = {
+          [32m+[0m[0m "Name" = "tkt-dev-ticketdesk"
+        }
+      [32m+[0m[0m tags_all             = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ticketdesk"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+
+      [32m+[0m[0m encryption_configuration {
+          [32m+[0m[0m encryption_type = "AES256"
+          [32m+[0m[0m kms_key         = (known after apply)
+        }
+
+      [32m+[0m[0m image_scanning_configuration {
+          [32m+[0m[0m scan_on_push = true
+        }
+    }
+
+[1m  # aws_ecr_repository.lambda_thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecr_repository" "lambda_thumbnail" {
+      [32m+[0m[0m arn                  = (known after apply)
+      [32m+[0m[0m force_delete         = true
+      [32m+[0m[0m id                   = (known after apply)
+      [32m+[0m[0m image_tag_mutability = "IMMUTABLE"
+      [32m+[0m[0m name                 = "tkt-dev-thumbnail-lambda"
+      [32m+[0m[0m registry_id          = (known after apply)
+      [32m+[0m[0m repository_url       = (known after apply)
+      [32m+[0m[0m tags                 = {
+          [32m+[0m[0m "Name" = "tkt-dev-thumbnail-lambda"
+        }
+      [32m+[0m[0m tags_all             = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-thumbnail-lambda"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+
+      [32m+[0m[0m encryption_configuration {
+          [32m+[0m[0m encryption_type = "AES256"
+          [32m+[0m[0m kms_key         = (known after apply)
+        }
+
+      [32m+[0m[0m image_scanning_configuration {
+          [32m+[0m[0m scan_on_push = true
+        }
+    }
+
+[1m  # aws_ecs_cluster.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_cluster" "main" {
+      [32m+[0m[0m arn      = (known after apply)
+      [32m+[0m[0m id       = (known after apply)
+      [32m+[0m[0m name     = "tkt-dev-cluster"
+      [32m+[0m[0m tags     = {
+          [32m+[0m[0m "Name" = "tkt-dev-cluster"
+        }
+      [32m+[0m[0m tags_all = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-cluster"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+
+      [32m+[0m[0m setting {
+          [32m+[0m[0m name  = "containerInsights"
+          [32m+[0m[0m value = "enabled"
+        }
+    }
+
+[1m  # aws_ecs_service.app[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_service" "app" {
+      [32m+[0m[0m availability_zone_rebalancing      = "DISABLED"
+      [32m+[0m[0m cluster                            = (known after apply)
+      [32m+[0m[0m deployment_maximum_percent         = 200
+      [32m+[0m[0m deployment_minimum_healthy_percent = 100
+      [32m+[0m[0m desired_count                      = 1
+      [32m+[0m[0m enable_ecs_managed_tags            = false
+      [32m+[0m[0m enable_execute_command             = false
+      [32m+[0m[0m health_check_grace_period_seconds  = 60
+      [32m+[0m[0m iam_role                           = (known after apply)
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m launch_type                        = "FARGATE"
+      [32m+[0m[0m name                               = "tkt-dev-ticketdesk-svc"
+      [32m+[0m[0m platform_version                   = (known after apply)
+      [32m+[0m[0m scheduling_strategy                = "REPLICA"
+      [32m+[0m[0m tags                               = {
+          [32m+[0m[0m "Name" = "tkt-dev-ticketdesk-svc"
+        }
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ticketdesk-svc"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m task_definition                    = (known after apply)
+      [32m+[0m[0m triggers                           = (known after apply)
+      [32m+[0m[0m wait_for_steady_state              = false
+
+      [32m+[0m[0m load_balancer {
+          [32m+[0m[0m container_name   = "ticketdesk-api"
+          [32m+[0m[0m container_port   = 8080
+          [32m+[0m[0m target_group_arn = (known after apply)
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network_configuration {
+          [32m+[0m[0m assign_public_ip = false
+          [32m+[0m[0m security_groups  = (known after apply)
+          [32m+[0m[0m subnets          = (known after apply)
+        }
+    }
+
+[1m  # aws_ecs_task_definition.app[0m will be created
+[0m  [32m+[0m[0m resource "aws_ecs_task_definition" "app" {
+      [32m+[0m[0m arn                      = (known after apply)
+      [32m+[0m[0m arn_without_revision     = (known after apply)
+      [32m+[0m[0m container_definitions    = (known after apply)
+      [32m+[0m[0m cpu                      = "256"
+      [32m+[0m[0m enable_fault_injection   = (known after apply)
+      [32m+[0m[0m execution_role_arn       = (known after apply)
+      [32m+[0m[0m family                   = "tkt-dev-ticketdesk"
+      [32m+[0m[0m id                       = (known after apply)
+      [32m+[0m[0m memory                   = "512"
+      [32m+[0m[0m network_mode             = "awsvpc"
+      [32m+[0m[0m requires_compatibilities = [
+          [32m+[0m[0m "FARGATE",
+        ]
+      [32m+[0m[0m revision                 = (known after apply)
+      [32m+[0m[0m skip_destroy             = false
+      [32m+[0m[0m tags                     = {
+          [32m+[0m[0m "Name" = "tkt-dev-ticketdesk-task"
+        }
+      [32m+[0m[0m tags_all                 = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ticketdesk-task"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m task_role_arn            = (known after apply)
+      [32m+[0m[0m track_latest             = false
+    }
+
+[1m  # aws_iam_access_key.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_access_key" "github_actions_deploy" {
+      [32m+[0m[0m create_date                    = (known after apply)
+      [32m+[0m[0m encrypted_secret               = (known after apply)
+      [32m+[0m[0m encrypted_ses_smtp_password_v4 = (known after apply)
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m key_fingerprint                = (known after apply)
+      [32m+[0m[0m secret                         = (sensitive value)
+      [32m+[0m[0m ses_smtp_password_v4           = (sensitive value)
+      [32m+[0m[0m status                         = "Active"
+      [32m+[0m[0m user                           = "tkt-dev-github-actions-deploy"
+    }
+
+[1m  # aws_iam_openid_connect_provider.github_actions[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_openid_connect_provider" "github_actions" {
+      [32m+[0m[0m arn             = (known after apply)
+      [32m+[0m[0m client_id_list  = [
+          [32m+[0m[0m "sts.amazonaws.com",
+        ]
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m tags            = {
+          [32m+[0m[0m "Name" = "tkt-dev-github-oidc"
+        }
+      [32m+[0m[0m tags_all        = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-github-oidc"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m thumbprint_list = [
+          [32m+[0m[0m "ab9d0263244dd0326eb67015705a667e79cfe998",
+        ]
+      [32m+[0m[0m url             = "https://token.actions.githubusercontent.com"
+    }
+
+[1m  # aws_iam_role.execution[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "execution" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "tkt-dev-ecs-execution-role"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-ecs-execution-role"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ecs-execution-role"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # aws_iam_role.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "github_actions_deploy" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = (known after apply)
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-github-actions-deploy"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-github-actions-deploy"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # aws_iam_role.lambda_thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "lambda_thumbnail" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "lambda.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "tkt-dev-thumbnail-lambda-role"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-thumbnail-lambda-role"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-thumbnail-lambda-role"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # aws_iam_role.task[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role" "task" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m assume_role_policy    = jsonencode(
+            {
+              [32m+[0m[0m Statement = [
+                  [32m+[0m[0m {
+                      [32m+[0m[0m Action    = "sts:AssumeRole"
+                      [32m+[0m[0m Effect    = "Allow"
+                      [32m+[0m[0m Principal = {
+                          [32m+[0m[0m Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              [32m+[0m[0m Version   = "2012-10-17"
+            }
+        )
+      [32m+[0m[0m create_date           = (known after apply)
+      [32m+[0m[0m force_detach_policies = false
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m managed_policy_arns   = (known after apply)
+      [32m+[0m[0m max_session_duration  = 3600
+      [32m+[0m[0m name                  = "tkt-dev-ecs-task-role"
+      [32m+[0m[0m name_prefix           = (known after apply)
+      [32m+[0m[0m path                  = "/"
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-ecs-task-role"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ecs-task-role"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m unique_id             = (known after apply)
+
+      [32m+[0m[0m inline_policy (known after apply)
+    }
+
+[1m  # aws_iam_role_policy.execution_secrets[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "execution_secrets" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-ecs-execution-secrets"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # aws_iam_role_policy.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "github_actions_deploy" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # aws_iam_role_policy.lambda_thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "lambda_thumbnail" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-thumbnail-lambda-policy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # aws_iam_role_policy.task_attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy" "task_attachments" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-ecs-task-attachments"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m role        = (known after apply)
+    }
+
+[1m  # aws_iam_role_policy_attachment.execution_managed[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_role_policy_attachment" "execution_managed" {
+      [32m+[0m[0m id         = (known after apply)
+      [32m+[0m[0m policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+      [32m+[0m[0m role       = "tkt-dev-ecs-execution-role"
+    }
+
+[1m  # aws_iam_user.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_user" "github_actions_deploy" {
+      [32m+[0m[0m arn           = (known after apply)
+      [32m+[0m[0m force_destroy = false
+      [32m+[0m[0m id            = (known after apply)
+      [32m+[0m[0m name          = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m path          = "/"
+      [32m+[0m[0m tags          = {
+          [32m+[0m[0m "Name" = "tkt-dev-github-actions-deploy-user"
+        }
+      [32m+[0m[0m tags_all      = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-github-actions-deploy-user"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m unique_id     = (known after apply)
+    }
+
+[1m  # aws_iam_user_policy.github_actions_deploy[0m will be created
+[0m  [32m+[0m[0m resource "aws_iam_user_policy" "github_actions_deploy" {
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m name        = "tkt-dev-github-actions-deploy"
+      [32m+[0m[0m name_prefix = (known after apply)
+      [32m+[0m[0m policy      = (known after apply)
+      [32m+[0m[0m user        = "tkt-dev-github-actions-deploy"
+    }
+
+[1m  # aws_internet_gateway.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_internet_gateway" "main" {
+      [32m+[0m[0m arn      = (known after apply)
+      [32m+[0m[0m id       = (known after apply)
+      [32m+[0m[0m owner_id = (known after apply)
+      [32m+[0m[0m tags     = {
+          [32m+[0m[0m "Name" = "tkt-dev-igw"
+        }
+      [32m+[0m[0m tags_all = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-igw"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id   = (known after apply)
+    }
+
+[1m  # aws_lambda_function.thumbnail[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_function" "thumbnail" {
+      [32m+[0m[0m architectures                  = (known after apply)
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m code_sha256                    = (known after apply)
+      [32m+[0m[0m function_name                  = "tkt-dev-thumbnail"
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m image_uri                      = "135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda:5b85950"
+      [32m+[0m[0m invoke_arn                     = (known after apply)
+      [32m+[0m[0m last_modified                  = (known after apply)
+      [32m+[0m[0m memory_size                    = 512
+      [32m+[0m[0m package_type                   = "Image"
+      [32m+[0m[0m publish                        = false
+      [32m+[0m[0m qualified_arn                  = (known after apply)
+      [32m+[0m[0m qualified_invoke_arn           = (known after apply)
+      [32m+[0m[0m reserved_concurrent_executions = -1
+      [32m+[0m[0m role                           = (known after apply)
+      [32m+[0m[0m signing_job_arn                = (known after apply)
+      [32m+[0m[0m signing_profile_version_arn    = (known after apply)
+      [32m+[0m[0m skip_destroy                   = false
+      [32m+[0m[0m source_code_hash               = (known after apply)
+      [32m+[0m[0m source_code_size               = (known after apply)
+      [32m+[0m[0m tags                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-thumbnail"
+        }
+      [32m+[0m[0m tags_all                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-thumbnail"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m timeout                        = 30
+      [32m+[0m[0m version                        = (known after apply)
+
+      [32m+[0m[0m ephemeral_storage (known after apply)
+
+      [32m+[0m[0m logging_config (known after apply)
+
+      [32m+[0m[0m tracing_config (known after apply)
+    }
+
+[1m  # aws_lambda_permission.allow_s3[0m will be created
+[0m  [32m+[0m[0m resource "aws_lambda_permission" "allow_s3" {
+      [32m+[0m[0m action              = "lambda:InvokeFunction"
+      [32m+[0m[0m function_name       = "tkt-dev-thumbnail"
+      [32m+[0m[0m id                  = (known after apply)
+      [32m+[0m[0m principal           = "s3.amazonaws.com"
+      [32m+[0m[0m source_arn          = (known after apply)
+      [32m+[0m[0m statement_id        = "AllowS3Invoke"
+      [32m+[0m[0m statement_id_prefix = (known after apply)
+    }
+
+[1m  # aws_lb.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_lb" "main" {
+      [32m+[0m[0m arn                                                          = (known after apply)
+      [32m+[0m[0m arn_suffix                                                   = (known after apply)
+      [32m+[0m[0m client_keep_alive                                            = 3600
+      [32m+[0m[0m desync_mitigation_mode                                       = "defensive"
+      [32m+[0m[0m dns_name                                                     = (known after apply)
+      [32m+[0m[0m drop_invalid_header_fields                                   = false
+      [32m+[0m[0m enable_deletion_protection                                   = false
+      [32m+[0m[0m enable_http2                                                 = true
+      [32m+[0m[0m enable_tls_version_and_cipher_suite_headers                  = false
+      [32m+[0m[0m enable_waf_fail_open                                         = false
+      [32m+[0m[0m enable_xff_client_port                                       = false
+      [32m+[0m[0m enable_zonal_shift                                           = false
+      [32m+[0m[0m enforce_security_group_inbound_rules_on_private_link_traffic = (known after apply)
+      [32m+[0m[0m id                                                           = (known after apply)
+      [32m+[0m[0m idle_timeout                                                 = 60
+      [32m+[0m[0m internal                                                     = false
+      [32m+[0m[0m ip_address_type                                              = (known after apply)
+      [32m+[0m[0m load_balancer_type                                           = "application"
+      [32m+[0m[0m name                                                         = "tkt-dev-alb"
+      [32m+[0m[0m name_prefix                                                  = (known after apply)
+      [32m+[0m[0m preserve_host_header                                         = false
+      [32m+[0m[0m security_groups                                              = (known after apply)
+      [32m+[0m[0m subnets                                                      = (known after apply)
+      [32m+[0m[0m tags                                                         = {
+          [32m+[0m[0m "Name" = "tkt-dev-alb"
+        }
+      [32m+[0m[0m tags_all                                                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-alb"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                                                       = (known after apply)
+      [32m+[0m[0m xff_header_processing_mode                                   = "append"
+      [32m+[0m[0m zone_id                                                      = (known after apply)
+
+      [32m+[0m[0m subnet_mapping (known after apply)
+    }
+
+[1m  # aws_lb_listener.http[0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_listener" "http" {
+      [32m+[0m[0m arn                                                                   = (known after apply)
+      [32m+[0m[0m id                                                                    = (known after apply)
+      [32m+[0m[0m load_balancer_arn                                                     = (known after apply)
+      [32m+[0m[0m port                                                                  = 80
+      [32m+[0m[0m protocol                                                              = "HTTP"
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_header_name               = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_issuer_header_name        = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_leaf_header_name          = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_serial_number_header_name = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_subject_header_name       = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_mtls_clientcert_validity_header_name      = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_tls_cipher_suite_header_name              = (known after apply)
+      [32m+[0m[0m routing_http_request_x_amzn_tls_version_header_name                   = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_credentials_header_value   = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_headers_header_value       = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_methods_header_value       = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_allow_origin_header_value        = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_expose_headers_header_value      = (known after apply)
+      [32m+[0m[0m routing_http_response_access_control_max_age_header_value             = (known after apply)
+      [32m+[0m[0m routing_http_response_content_security_policy_header_value            = (known after apply)
+      [32m+[0m[0m routing_http_response_server_enabled                                  = (known after apply)
+      [32m+[0m[0m routing_http_response_strict_transport_security_header_value          = (known after apply)
+      [32m+[0m[0m routing_http_response_x_content_type_options_header_value             = (known after apply)
+      [32m+[0m[0m routing_http_response_x_frame_options_header_value                    = (known after apply)
+      [32m+[0m[0m ssl_policy                                                            = (known after apply)
+      [32m+[0m[0m tags_all                                                              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tcp_idle_timeout_seconds                                              = (known after apply)
+
+      [32m+[0m[0m default_action {
+          [32m+[0m[0m order            = (known after apply)
+          [32m+[0m[0m target_group_arn = (known after apply)
+          [32m+[0m[0m type             = "forward"
+        }
+
+      [32m+[0m[0m mutual_authentication (known after apply)
+    }
+
+[1m  # aws_lb_target_group.app[0m will be created
+[0m  [32m+[0m[0m resource "aws_lb_target_group" "app" {
+      [32m+[0m[0m arn                                = (known after apply)
+      [32m+[0m[0m arn_suffix                         = (known after apply)
+      [32m+[0m[0m connection_termination             = (known after apply)
+      [32m+[0m[0m deregistration_delay               = "300"
+      [32m+[0m[0m id                                 = (known after apply)
+      [32m+[0m[0m ip_address_type                    = (known after apply)
+      [32m+[0m[0m lambda_multi_value_headers_enabled = false
+      [32m+[0m[0m load_balancer_arns                 = (known after apply)
+      [32m+[0m[0m load_balancing_algorithm_type      = (known after apply)
+      [32m+[0m[0m load_balancing_anomaly_mitigation  = (known after apply)
+      [32m+[0m[0m load_balancing_cross_zone_enabled  = (known after apply)
+      [32m+[0m[0m name                               = "tkt-dev-tg"
+      [32m+[0m[0m name_prefix                        = (known after apply)
+      [32m+[0m[0m port                               = 8080
+      [32m+[0m[0m preserve_client_ip                 = (known after apply)
+      [32m+[0m[0m protocol                           = "HTTP"
+      [32m+[0m[0m protocol_version                   = (known after apply)
+      [32m+[0m[0m proxy_protocol_v2                  = false
+      [32m+[0m[0m slow_start                         = 0
+      [32m+[0m[0m tags                               = {
+          [32m+[0m[0m "Name" = "tkt-dev-tg"
+        }
+      [32m+[0m[0m tags_all                           = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-tg"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m target_type                        = "ip"
+      [32m+[0m[0m vpc_id                             = (known after apply)
+
+      [32m+[0m[0m health_check {
+          [32m+[0m[0m enabled             = true
+          [32m+[0m[0m healthy_threshold   = 2
+          [32m+[0m[0m interval            = 15
+          [32m+[0m[0m matcher             = "200"
+          [32m+[0m[0m path                = "/api/health"
+          [32m+[0m[0m port                = "traffic-port"
+          [32m+[0m[0m protocol            = "HTTP"
+          [32m+[0m[0m timeout             = 5
+          [32m+[0m[0m unhealthy_threshold = 3
+        }
+
+      [32m+[0m[0m stickiness (known after apply)
+
+      [32m+[0m[0m target_failover (known after apply)
+
+      [32m+[0m[0m target_group_health (known after apply)
+
+      [32m+[0m[0m target_health_state (known after apply)
+    }
+
+[1m  # aws_route_table.private[0m will be created
+[0m  [32m+[0m[0m resource "aws_route_table" "private" {
+      [32m+[0m[0m arn              = (known after apply)
+      [32m+[0m[0m id               = (known after apply)
+      [32m+[0m[0m owner_id         = (known after apply)
+      [32m+[0m[0m propagating_vgws = (known after apply)
+      [32m+[0m[0m route            = (known after apply)
+      [32m+[0m[0m tags             = {
+          [32m+[0m[0m "Name" = "tkt-dev-private-rt"
+        }
+      [32m+[0m[0m tags_all         = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-private-rt"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id           = (known after apply)
+    }
+
+[1m  # aws_route_table.public[0m will be created
+[0m  [32m+[0m[0m resource "aws_route_table" "public" {
+      [32m+[0m[0m arn              = (known after apply)
+      [32m+[0m[0m id               = (known after apply)
+      [32m+[0m[0m owner_id         = (known after apply)
+      [32m+[0m[0m propagating_vgws = (known after apply)
+      [32m+[0m[0m route            = [
+          [32m+[0m[0m {
+              [32m+[0m[0m cidr_block                 = "0.0.0.0/0"
+              [32m+[0m[0m gateway_id                 = (known after apply)
+                [90m# (11 unchanged attributes hidden)[0m[0m
+            },
+        ]
+      [32m+[0m[0m tags             = {
+          [32m+[0m[0m "Name" = "tkt-dev-public-rt"
+        }
+      [32m+[0m[0m tags_all         = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-public-rt"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id           = (known after apply)
+    }
+
+[1m  # aws_route_table_association.private[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_route_table_association" "private" {
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m route_table_id = (known after apply)
+      [32m+[0m[0m subnet_id      = (known after apply)
+    }
+
+[1m  # aws_route_table_association.private[1][0m will be created
+[0m  [32m+[0m[0m resource "aws_route_table_association" "private" {
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m route_table_id = (known after apply)
+      [32m+[0m[0m subnet_id      = (known after apply)
+    }
+
+[1m  # aws_route_table_association.public[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_route_table_association" "public" {
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m route_table_id = (known after apply)
+      [32m+[0m[0m subnet_id      = (known after apply)
+    }
+
+[1m  # aws_route_table_association.public[1][0m will be created
+[0m  [32m+[0m[0m resource "aws_route_table_association" "public" {
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m route_table_id = (known after apply)
+      [32m+[0m[0m subnet_id      = (known after apply)
+    }
+
+[1m  # aws_s3_bucket.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket" "attachments" {
+      [32m+[0m[0m acceleration_status         = (known after apply)
+      [32m+[0m[0m acl                         = (known after apply)
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m bucket                      = "tkt-dev-attachments"
+      [32m+[0m[0m bucket_domain_name          = (known after apply)
+      [32m+[0m[0m bucket_prefix               = (known after apply)
+      [32m+[0m[0m bucket_regional_domain_name = (known after apply)
+      [32m+[0m[0m force_destroy               = true
+      [32m+[0m[0m hosted_zone_id              = (known after apply)
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m object_lock_enabled         = (known after apply)
+      [32m+[0m[0m policy                      = (known after apply)
+      [32m+[0m[0m region                      = (known after apply)
+      [32m+[0m[0m request_payer               = (known after apply)
+      [32m+[0m[0m tags                        = {
+          [32m+[0m[0m "Name" = "tkt-dev-attachments"
+        }
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-attachments"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m website_domain              = (known after apply)
+      [32m+[0m[0m website_endpoint            = (known after apply)
+
+      [32m+[0m[0m cors_rule (known after apply)
+
+      [32m+[0m[0m grant (known after apply)
+
+      [32m+[0m[0m lifecycle_rule (known after apply)
+
+      [32m+[0m[0m logging (known after apply)
+
+      [32m+[0m[0m object_lock_configuration (known after apply)
+
+      [32m+[0m[0m replication_configuration (known after apply)
+
+      [32m+[0m[0m server_side_encryption_configuration (known after apply)
+
+      [32m+[0m[0m versioning (known after apply)
+
+      [32m+[0m[0m website (known after apply)
+    }
+
+[1m  # aws_s3_bucket.frontend[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket" "frontend" {
+      [32m+[0m[0m acceleration_status         = (known after apply)
+      [32m+[0m[0m acl                         = (known after apply)
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m bucket                      = "tkt-dev-frontend"
+      [32m+[0m[0m bucket_domain_name          = (known after apply)
+      [32m+[0m[0m bucket_prefix               = (known after apply)
+      [32m+[0m[0m bucket_regional_domain_name = (known after apply)
+      [32m+[0m[0m force_destroy               = true
+      [32m+[0m[0m hosted_zone_id              = (known after apply)
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m object_lock_enabled         = (known after apply)
+      [32m+[0m[0m policy                      = (known after apply)
+      [32m+[0m[0m region                      = (known after apply)
+      [32m+[0m[0m request_payer               = (known after apply)
+      [32m+[0m[0m tags                        = {
+          [32m+[0m[0m "Name" = "tkt-dev-frontend"
+        }
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-frontend"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m website_domain              = (known after apply)
+      [32m+[0m[0m website_endpoint            = (known after apply)
+
+      [32m+[0m[0m cors_rule (known after apply)
+
+      [32m+[0m[0m grant (known after apply)
+
+      [32m+[0m[0m lifecycle_rule (known after apply)
+
+      [32m+[0m[0m logging (known after apply)
+
+      [32m+[0m[0m object_lock_configuration (known after apply)
+
+      [32m+[0m[0m replication_configuration (known after apply)
+
+      [32m+[0m[0m server_side_encryption_configuration (known after apply)
+
+      [32m+[0m[0m versioning (known after apply)
+
+      [32m+[0m[0m website (known after apply)
+    }
+
+[1m  # aws_s3_bucket_cors_configuration.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_cors_configuration" "attachments" {
+      [32m+[0m[0m bucket = (known after apply)
+      [32m+[0m[0m id     = (known after apply)
+
+      [32m+[0m[0m cors_rule {
+          [32m+[0m[0m allowed_headers = [
+              [32m+[0m[0m "*",
+            ]
+          [32m+[0m[0m allowed_methods = [
+              [32m+[0m[0m "GET",
+              [32m+[0m[0m "POST",
+              [32m+[0m[0m "PUT",
+            ]
+          [32m+[0m[0m allowed_origins = (known after apply)
+          [32m+[0m[0m expose_headers  = []
+            id              = [90mnull[0m[0m
+          [32m+[0m[0m max_age_seconds = 3000
+        }
+    }
+
+[1m  # aws_s3_bucket_notification.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_notification" "attachments" {
+      [32m+[0m[0m bucket      = (known after apply)
+      [32m+[0m[0m eventbridge = false
+      [32m+[0m[0m id          = (known after apply)
+
+      [32m+[0m[0m lambda_function {
+          [32m+[0m[0m events              = [
+              [32m+[0m[0m "s3:ObjectCreated:*",
+            ]
+          [32m+[0m[0m filter_prefix       = "attachments/"
+          [32m+[0m[0m id                  = (known after apply)
+          [32m+[0m[0m lambda_function_arn = (known after apply)
+        }
+    }
+
+[1m  # aws_s3_bucket_policy.frontend[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_policy" "frontend" {
+      [32m+[0m[0m bucket = (known after apply)
+      [32m+[0m[0m id     = (known after apply)
+      [32m+[0m[0m policy = (known after apply)
+    }
+
+[1m  # aws_s3_bucket_public_access_block.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_public_access_block" "attachments" {
+      [32m+[0m[0m block_public_acls       = true
+      [32m+[0m[0m block_public_policy     = true
+      [32m+[0m[0m bucket                  = (known after apply)
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m ignore_public_acls      = true
+      [32m+[0m[0m restrict_public_buckets = true
+    }
+
+[1m  # aws_s3_bucket_public_access_block.frontend[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_public_access_block" "frontend" {
+      [32m+[0m[0m block_public_acls       = true
+      [32m+[0m[0m block_public_policy     = false
+      [32m+[0m[0m bucket                  = (known after apply)
+      [32m+[0m[0m id                      = (known after apply)
+      [32m+[0m[0m ignore_public_acls      = true
+      [32m+[0m[0m restrict_public_buckets = false
+    }
+
+[1m  # aws_s3_bucket_server_side_encryption_configuration.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_server_side_encryption_configuration" "attachments" {
+      [32m+[0m[0m bucket = (known after apply)
+      [32m+[0m[0m id     = (known after apply)
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m apply_server_side_encryption_by_default {
+              [32m+[0m[0m sse_algorithm     = "AES256"
+                [90m# (1 unchanged attribute hidden)[0m[0m
+            }
+        }
+    }
+
+[1m  # aws_s3_bucket_server_side_encryption_configuration.frontend[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_server_side_encryption_configuration" "frontend" {
+      [32m+[0m[0m bucket = (known after apply)
+      [32m+[0m[0m id     = (known after apply)
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m apply_server_side_encryption_by_default {
+              [32m+[0m[0m sse_algorithm     = "AES256"
+                [90m# (1 unchanged attribute hidden)[0m[0m
+            }
+        }
+    }
+
+[1m  # aws_s3_bucket_versioning.attachments[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_versioning" "attachments" {
+      [32m+[0m[0m bucket = (known after apply)
+      [32m+[0m[0m id     = (known after apply)
+
+      [32m+[0m[0m versioning_configuration {
+          [32m+[0m[0m mfa_delete = (known after apply)
+          [32m+[0m[0m status     = "Enabled"
+        }
+    }
+
+[1m  # aws_s3_bucket_website_configuration.frontend[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_bucket_website_configuration" "frontend" {
+      [32m+[0m[0m bucket           = (known after apply)
+      [32m+[0m[0m id               = (known after apply)
+      [32m+[0m[0m routing_rules    = (known after apply)
+      [32m+[0m[0m website_domain   = (known after apply)
+      [32m+[0m[0m website_endpoint = (known after apply)
+
+      [32m+[0m[0m index_document {
+          [32m+[0m[0m suffix = "index.html"
+        }
+
+      [32m+[0m[0m routing_rule (known after apply)
+    }
+
+[1m  # aws_s3_object.frontend_config[0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_object" "frontend_config" {
+      [32m+[0m[0m acl                    = (known after apply)
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m bucket                 = (known after apply)
+      [32m+[0m[0m bucket_key_enabled     = (known after apply)
+      [32m+[0m[0m checksum_crc32         = (known after apply)
+      [32m+[0m[0m checksum_crc32c        = (known after apply)
+      [32m+[0m[0m checksum_crc64nvme     = (known after apply)
+      [32m+[0m[0m checksum_sha1          = (known after apply)
+      [32m+[0m[0m checksum_sha256        = (known after apply)
+      [32m+[0m[0m content                = (known after apply)
+      [32m+[0m[0m content_type           = "application/javascript"
+      [32m+[0m[0m etag                   = (known after apply)
+      [32m+[0m[0m force_destroy          = false
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m key                    = "config.js"
+      [32m+[0m[0m kms_key_id             = (known after apply)
+      [32m+[0m[0m server_side_encryption = (known after apply)
+      [32m+[0m[0m storage_class          = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m version_id             = (known after apply)
+    }
+
+[1m  # aws_s3_object.frontend_files["app.js"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_object" "frontend_files" {
+      [32m+[0m[0m acl                    = (known after apply)
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m bucket                 = (known after apply)
+      [32m+[0m[0m bucket_key_enabled     = (known after apply)
+      [32m+[0m[0m checksum_crc32         = (known after apply)
+      [32m+[0m[0m checksum_crc32c        = (known after apply)
+      [32m+[0m[0m checksum_crc64nvme     = (known after apply)
+      [32m+[0m[0m checksum_sha1          = (known after apply)
+      [32m+[0m[0m checksum_sha256        = (known after apply)
+      [32m+[0m[0m content_type           = "application/javascript"
+      [32m+[0m[0m etag                   = "4fa366f3bef78bfb234accb5b9b78789"
+      [32m+[0m[0m force_destroy          = false
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m key                    = "app.js"
+      [32m+[0m[0m kms_key_id             = (known after apply)
+      [32m+[0m[0m server_side_encryption = (known after apply)
+      [32m+[0m[0m source                 = "./../frontend/app.js"
+      [32m+[0m[0m storage_class          = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m version_id             = (known after apply)
+    }
+
+[1m  # aws_s3_object.frontend_files["index.html"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_object" "frontend_files" {
+      [32m+[0m[0m acl                    = (known after apply)
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m bucket                 = (known after apply)
+      [32m+[0m[0m bucket_key_enabled     = (known after apply)
+      [32m+[0m[0m checksum_crc32         = (known after apply)
+      [32m+[0m[0m checksum_crc32c        = (known after apply)
+      [32m+[0m[0m checksum_crc64nvme     = (known after apply)
+      [32m+[0m[0m checksum_sha1          = (known after apply)
+      [32m+[0m[0m checksum_sha256        = (known after apply)
+      [32m+[0m[0m content_type           = "text/html"
+      [32m+[0m[0m etag                   = "f2a28f47b5f93a78d17827eb047b354a"
+      [32m+[0m[0m force_destroy          = false
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m key                    = "index.html"
+      [32m+[0m[0m kms_key_id             = (known after apply)
+      [32m+[0m[0m server_side_encryption = (known after apply)
+      [32m+[0m[0m source                 = "./../frontend/index.html"
+      [32m+[0m[0m storage_class          = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m version_id             = (known after apply)
+    }
+
+[1m  # aws_s3_object.frontend_files["styles.css"][0m will be created
+[0m  [32m+[0m[0m resource "aws_s3_object" "frontend_files" {
+      [32m+[0m[0m acl                    = (known after apply)
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m bucket                 = (known after apply)
+      [32m+[0m[0m bucket_key_enabled     = (known after apply)
+      [32m+[0m[0m checksum_crc32         = (known after apply)
+      [32m+[0m[0m checksum_crc32c        = (known after apply)
+      [32m+[0m[0m checksum_crc64nvme     = (known after apply)
+      [32m+[0m[0m checksum_sha1          = (known after apply)
+      [32m+[0m[0m checksum_sha256        = (known after apply)
+      [32m+[0m[0m content_type           = "text/css"
+      [32m+[0m[0m etag                   = "d7808b6e9a8d55225e1a33a6751c33a7"
+      [32m+[0m[0m force_destroy          = false
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m key                    = "styles.css"
+      [32m+[0m[0m kms_key_id             = (known after apply)
+      [32m+[0m[0m server_side_encryption = (known after apply)
+      [32m+[0m[0m source                 = "./../frontend/styles.css"
+      [32m+[0m[0m storage_class          = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m version_id             = (known after apply)
+    }
+
+[1m  # aws_secretsmanager_secret.db_password[0m will be created
+[0m  [32m+[0m[0m resource "aws_secretsmanager_secret" "db_password" {
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m force_overwrite_replica_secret = false
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m name                           = "tkt-dev/db-password"
+      [32m+[0m[0m name_prefix                    = (known after apply)
+      [32m+[0m[0m policy                         = (known after apply)
+      [32m+[0m[0m recovery_window_in_days        = 0
+      [32m+[0m[0m tags                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-db-password"
+        }
+      [32m+[0m[0m tags_all                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db-password"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+
+      [32m+[0m[0m replica (known after apply)
+    }
+
+[1m  # aws_secretsmanager_secret.jwt_secret[0m will be created
+[0m  [32m+[0m[0m resource "aws_secretsmanager_secret" "jwt_secret" {
+      [32m+[0m[0m arn                            = (known after apply)
+      [32m+[0m[0m force_overwrite_replica_secret = false
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m name                           = "tkt-dev/jwt-secret"
+      [32m+[0m[0m name_prefix                    = (known after apply)
+      [32m+[0m[0m policy                         = (known after apply)
+      [32m+[0m[0m recovery_window_in_days        = 0
+      [32m+[0m[0m tags                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-jwt-secret"
+        }
+      [32m+[0m[0m tags_all                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-jwt-secret"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+
+      [32m+[0m[0m replica (known after apply)
+    }
+
+[1m  # aws_secretsmanager_secret_version.db_password[0m will be created
+[0m  [32m+[0m[0m resource "aws_secretsmanager_secret_version" "db_password" {
+      [32m+[0m[0m arn                  = (known after apply)
+      [32m+[0m[0m has_secret_string_wo = (known after apply)
+      [32m+[0m[0m id                   = (known after apply)
+      [32m+[0m[0m secret_id            = (known after apply)
+      [32m+[0m[0m secret_string        = (sensitive value)
+      [32m+[0m[0m secret_string_wo     = (write-only attribute)
+      [32m+[0m[0m version_id           = (known after apply)
+      [32m+[0m[0m version_stages       = (known after apply)
+    }
+
+[1m  # aws_secretsmanager_secret_version.jwt_secret[0m will be created
+[0m  [32m+[0m[0m resource "aws_secretsmanager_secret_version" "jwt_secret" {
+      [32m+[0m[0m arn                  = (known after apply)
+      [32m+[0m[0m has_secret_string_wo = (known after apply)
+      [32m+[0m[0m id                   = (known after apply)
+      [32m+[0m[0m secret_id            = (known after apply)
+      [32m+[0m[0m secret_string        = (sensitive value)
+      [32m+[0m[0m secret_string_wo     = (write-only attribute)
+      [32m+[0m[0m version_id           = (known after apply)
+      [32m+[0m[0m version_stages       = (known after apply)
+    }
+
+[1m  # aws_security_group.alb[0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "alb" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "Internet-facing ALB for the TicketDesk API"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "tkt-dev-alb-sg"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "tkt-dev-alb-sg"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-alb-sg"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                 = (known after apply)
+    }
+
+[1m  # aws_security_group.ecs_task[0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "ecs_task" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "TicketDesk API tasks (private subnet)"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "tkt-dev-ecs-task-sg"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "tkt-dev-ecs-task-sg"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ecs-task-sg"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                 = (known after apply)
+    }
+
+[1m  # aws_security_group.rds[0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "rds" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "TicketDesk PostgreSQL database (private subnet)"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "tkt-dev-rds-sg"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "tkt-dev-rds-sg"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-rds-sg"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                 = (known after apply)
+    }
+
+[1m  # aws_security_group.vpc_endpoints[0m will be created
+[0m  [32m+[0m[0m resource "aws_security_group" "vpc_endpoints" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "Interface VPC endpoints (ECR, logs, Secrets Manager, SSM)"
+      [32m+[0m[0m egress                 = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ingress                = (known after apply)
+      [32m+[0m[0m name                   = "tkt-dev-vpce-sg"
+      [32m+[0m[0m name_prefix            = (known after apply)
+      [32m+[0m[0m owner_id               = (known after apply)
+      [32m+[0m[0m revoke_rules_on_delete = false
+      [32m+[0m[0m tags                   = {
+          [32m+[0m[0m "Name" = "tkt-dev-vpce-sg"
+        }
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-vpce-sg"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                 = (known after apply)
+    }
+
+[1m  # aws_sns_topic.alerts[0m will be created
+[0m  [32m+[0m[0m resource "aws_sns_topic" "alerts" {
+      [32m+[0m[0m arn                         = (known after apply)
+      [32m+[0m[0m beginning_archive_time      = (known after apply)
+      [32m+[0m[0m content_based_deduplication = false
+      [32m+[0m[0m fifo_throughput_scope       = (known after apply)
+      [32m+[0m[0m fifo_topic                  = false
+      [32m+[0m[0m id                          = (known after apply)
+      [32m+[0m[0m name                        = "tkt-dev-alerts"
+      [32m+[0m[0m name_prefix                 = (known after apply)
+      [32m+[0m[0m owner                       = (known after apply)
+      [32m+[0m[0m policy                      = (known after apply)
+      [32m+[0m[0m signature_version           = (known after apply)
+      [32m+[0m[0m tags                        = {
+          [32m+[0m[0m "Name" = "tkt-dev-alerts"
+        }
+      [32m+[0m[0m tags_all                    = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-alerts"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tracing_config              = (known after apply)
+    }
+
+[1m  # aws_sns_topic_subscription.alerts_email[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_sns_topic_subscription" "alerts_email" {
+      [32m+[0m[0m arn                             = (known after apply)
+      [32m+[0m[0m confirmation_timeout_in_minutes = 1
+      [32m+[0m[0m confirmation_was_authenticated  = (known after apply)
+      [32m+[0m[0m endpoint                        = "workdsp5@gmail.com"
+      [32m+[0m[0m endpoint_auto_confirms          = false
+      [32m+[0m[0m filter_policy_scope             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+      [32m+[0m[0m owner_id                        = (known after apply)
+      [32m+[0m[0m pending_confirmation            = (known after apply)
+      [32m+[0m[0m protocol                        = "email"
+      [32m+[0m[0m raw_message_delivery            = false
+      [32m+[0m[0m topic_arn                       = (known after apply)
+    }
+
+[1m  # aws_ssm_parameter.attachments_bucket[0m will be created
+[0m  [32m+[0m[0m resource "aws_ssm_parameter" "attachments_bucket" {
+      [32m+[0m[0m arn            = (known after apply)
+      [32m+[0m[0m data_type      = (known after apply)
+      [32m+[0m[0m has_value_wo   = (known after apply)
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m insecure_value = (known after apply)
+      [32m+[0m[0m key_id         = (known after apply)
+      [32m+[0m[0m name           = "/tkt-dev/app/attachments-bucket"
+      [32m+[0m[0m tags           = {
+          [32m+[0m[0m "Name" = "tkt-dev-attachments-bucket"
+        }
+      [32m+[0m[0m tags_all       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-attachments-bucket"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tier           = (known after apply)
+      [32m+[0m[0m type           = "String"
+      [32m+[0m[0m value          = (sensitive value)
+      [32m+[0m[0m value_wo       = (write-only attribute)
+      [32m+[0m[0m version        = (known after apply)
+    }
+
+[1m  # aws_ssm_parameter.cors_origins[0m will be created
+[0m  [32m+[0m[0m resource "aws_ssm_parameter" "cors_origins" {
+      [32m+[0m[0m arn            = (known after apply)
+      [32m+[0m[0m data_type      = (known after apply)
+      [32m+[0m[0m has_value_wo   = (known after apply)
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m insecure_value = (known after apply)
+      [32m+[0m[0m key_id         = (known after apply)
+      [32m+[0m[0m name           = "/tkt-dev/app/cors-origins"
+      [32m+[0m[0m tags           = {
+          [32m+[0m[0m "Name" = "tkt-dev-cors-origins"
+        }
+      [32m+[0m[0m tags_all       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-cors-origins"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tier           = (known after apply)
+      [32m+[0m[0m type           = "String"
+      [32m+[0m[0m value          = (sensitive value)
+      [32m+[0m[0m value_wo       = (write-only attribute)
+      [32m+[0m[0m version        = (known after apply)
+    }
+
+[1m  # aws_ssm_parameter.db_host[0m will be created
+[0m  [32m+[0m[0m resource "aws_ssm_parameter" "db_host" {
+      [32m+[0m[0m arn            = (known after apply)
+      [32m+[0m[0m data_type      = (known after apply)
+      [32m+[0m[0m has_value_wo   = (known after apply)
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m insecure_value = (known after apply)
+      [32m+[0m[0m key_id         = (known after apply)
+      [32m+[0m[0m name           = "/tkt-dev/db/host"
+      [32m+[0m[0m tags           = {
+          [32m+[0m[0m "Name" = "tkt-dev-db-host"
+        }
+      [32m+[0m[0m tags_all       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db-host"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tier           = (known after apply)
+      [32m+[0m[0m type           = "String"
+      [32m+[0m[0m value          = (sensitive value)
+      [32m+[0m[0m value_wo       = (write-only attribute)
+      [32m+[0m[0m version        = (known after apply)
+    }
+
+[1m  # aws_ssm_parameter.db_name[0m will be created
+[0m  [32m+[0m[0m resource "aws_ssm_parameter" "db_name" {
+      [32m+[0m[0m arn            = (known after apply)
+      [32m+[0m[0m data_type      = (known after apply)
+      [32m+[0m[0m has_value_wo   = (known after apply)
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m insecure_value = (known after apply)
+      [32m+[0m[0m key_id         = (known after apply)
+      [32m+[0m[0m name           = "/tkt-dev/db/name"
+      [32m+[0m[0m tags           = {
+          [32m+[0m[0m "Name" = "tkt-dev-db-name"
+        }
+      [32m+[0m[0m tags_all       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db-name"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tier           = (known after apply)
+      [32m+[0m[0m type           = "String"
+      [32m+[0m[0m value          = (sensitive value)
+      [32m+[0m[0m value_wo       = (write-only attribute)
+      [32m+[0m[0m version        = (known after apply)
+    }
+
+[1m  # aws_ssm_parameter.db_port[0m will be created
+[0m  [32m+[0m[0m resource "aws_ssm_parameter" "db_port" {
+      [32m+[0m[0m arn            = (known after apply)
+      [32m+[0m[0m data_type      = (known after apply)
+      [32m+[0m[0m has_value_wo   = (known after apply)
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m insecure_value = (known after apply)
+      [32m+[0m[0m key_id         = (known after apply)
+      [32m+[0m[0m name           = "/tkt-dev/db/port"
+      [32m+[0m[0m tags           = {
+          [32m+[0m[0m "Name" = "tkt-dev-db-port"
+        }
+      [32m+[0m[0m tags_all       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db-port"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tier           = (known after apply)
+      [32m+[0m[0m type           = "String"
+      [32m+[0m[0m value          = (sensitive value)
+      [32m+[0m[0m value_wo       = (write-only attribute)
+      [32m+[0m[0m version        = (known after apply)
+    }
+
+[1m  # aws_ssm_parameter.db_user[0m will be created
+[0m  [32m+[0m[0m resource "aws_ssm_parameter" "db_user" {
+      [32m+[0m[0m arn            = (known after apply)
+      [32m+[0m[0m data_type      = (known after apply)
+      [32m+[0m[0m has_value_wo   = (known after apply)
+      [32m+[0m[0m id             = (known after apply)
+      [32m+[0m[0m insecure_value = (known after apply)
+      [32m+[0m[0m key_id         = (known after apply)
+      [32m+[0m[0m name           = "/tkt-dev/db/username"
+      [32m+[0m[0m tags           = {
+          [32m+[0m[0m "Name" = "tkt-dev-db-username"
+        }
+      [32m+[0m[0m tags_all       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-db-username"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m tier           = (known after apply)
+      [32m+[0m[0m type           = "String"
+      [32m+[0m[0m value          = (sensitive value)
+      [32m+[0m[0m value_wo       = (write-only attribute)
+      [32m+[0m[0m version        = (known after apply)
+    }
+
+[1m  # aws_subnet.private[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_subnet" "private" {
+      [32m+[0m[0m arn                                            = (known after apply)
+      [32m+[0m[0m assign_ipv6_address_on_creation                = false
+      [32m+[0m[0m availability_zone                              = "us-east-1a"
+      [32m+[0m[0m availability_zone_id                           = (known after apply)
+      [32m+[0m[0m cidr_block                                     = "10.20.10.0/24"
+      [32m+[0m[0m enable_dns64                                   = false
+      [32m+[0m[0m enable_resource_name_dns_a_record_on_launch    = false
+      [32m+[0m[0m enable_resource_name_dns_aaaa_record_on_launch = false
+      [32m+[0m[0m id                                             = (known after apply)
+      [32m+[0m[0m ipv6_cidr_block_association_id                 = (known after apply)
+      [32m+[0m[0m ipv6_native                                    = false
+      [32m+[0m[0m map_public_ip_on_launch                        = false
+      [32m+[0m[0m owner_id                                       = (known after apply)
+      [32m+[0m[0m private_dns_hostname_type_on_launch            = (known after apply)
+      [32m+[0m[0m tags                                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-private-0"
+        }
+      [32m+[0m[0m tags_all                                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-private-0"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                                         = (known after apply)
+    }
+
+[1m  # aws_subnet.private[1][0m will be created
+[0m  [32m+[0m[0m resource "aws_subnet" "private" {
+      [32m+[0m[0m arn                                            = (known after apply)
+      [32m+[0m[0m assign_ipv6_address_on_creation                = false
+      [32m+[0m[0m availability_zone                              = "us-east-1b"
+      [32m+[0m[0m availability_zone_id                           = (known after apply)
+      [32m+[0m[0m cidr_block                                     = "10.20.11.0/24"
+      [32m+[0m[0m enable_dns64                                   = false
+      [32m+[0m[0m enable_resource_name_dns_a_record_on_launch    = false
+      [32m+[0m[0m enable_resource_name_dns_aaaa_record_on_launch = false
+      [32m+[0m[0m id                                             = (known after apply)
+      [32m+[0m[0m ipv6_cidr_block_association_id                 = (known after apply)
+      [32m+[0m[0m ipv6_native                                    = false
+      [32m+[0m[0m map_public_ip_on_launch                        = false
+      [32m+[0m[0m owner_id                                       = (known after apply)
+      [32m+[0m[0m private_dns_hostname_type_on_launch            = (known after apply)
+      [32m+[0m[0m tags                                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-private-1"
+        }
+      [32m+[0m[0m tags_all                                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-private-1"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                                         = (known after apply)
+    }
+
+[1m  # aws_subnet.public[0][0m will be created
+[0m  [32m+[0m[0m resource "aws_subnet" "public" {
+      [32m+[0m[0m arn                                            = (known after apply)
+      [32m+[0m[0m assign_ipv6_address_on_creation                = false
+      [32m+[0m[0m availability_zone                              = "us-east-1a"
+      [32m+[0m[0m availability_zone_id                           = (known after apply)
+      [32m+[0m[0m cidr_block                                     = "10.20.0.0/24"
+      [32m+[0m[0m enable_dns64                                   = false
+      [32m+[0m[0m enable_resource_name_dns_a_record_on_launch    = false
+      [32m+[0m[0m enable_resource_name_dns_aaaa_record_on_launch = false
+      [32m+[0m[0m id                                             = (known after apply)
+      [32m+[0m[0m ipv6_cidr_block_association_id                 = (known after apply)
+      [32m+[0m[0m ipv6_native                                    = false
+      [32m+[0m[0m map_public_ip_on_launch                        = true
+      [32m+[0m[0m owner_id                                       = (known after apply)
+      [32m+[0m[0m private_dns_hostname_type_on_launch            = (known after apply)
+      [32m+[0m[0m tags                                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-public-0"
+        }
+      [32m+[0m[0m tags_all                                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-public-0"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                                         = (known after apply)
+    }
+
+[1m  # aws_subnet.public[1][0m will be created
+[0m  [32m+[0m[0m resource "aws_subnet" "public" {
+      [32m+[0m[0m arn                                            = (known after apply)
+      [32m+[0m[0m assign_ipv6_address_on_creation                = false
+      [32m+[0m[0m availability_zone                              = "us-east-1b"
+      [32m+[0m[0m availability_zone_id                           = (known after apply)
+      [32m+[0m[0m cidr_block                                     = "10.20.1.0/24"
+      [32m+[0m[0m enable_dns64                                   = false
+      [32m+[0m[0m enable_resource_name_dns_a_record_on_launch    = false
+      [32m+[0m[0m enable_resource_name_dns_aaaa_record_on_launch = false
+      [32m+[0m[0m id                                             = (known after apply)
+      [32m+[0m[0m ipv6_cidr_block_association_id                 = (known after apply)
+      [32m+[0m[0m ipv6_native                                    = false
+      [32m+[0m[0m map_public_ip_on_launch                        = true
+      [32m+[0m[0m owner_id                                       = (known after apply)
+      [32m+[0m[0m private_dns_hostname_type_on_launch            = (known after apply)
+      [32m+[0m[0m tags                                           = {
+          [32m+[0m[0m "Name" = "tkt-dev-public-1"
+        }
+      [32m+[0m[0m tags_all                                       = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-public-1"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_id                                         = (known after apply)
+    }
+
+[1m  # aws_vpc.main[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc" "main" {
+      [32m+[0m[0m arn                                  = (known after apply)
+      [32m+[0m[0m cidr_block                           = "10.20.0.0/16"
+      [32m+[0m[0m default_network_acl_id               = (known after apply)
+      [32m+[0m[0m default_route_table_id               = (known after apply)
+      [32m+[0m[0m default_security_group_id            = (known after apply)
+      [32m+[0m[0m dhcp_options_id                      = (known after apply)
+      [32m+[0m[0m enable_dns_hostnames                 = true
+      [32m+[0m[0m enable_dns_support                   = true
+      [32m+[0m[0m enable_network_address_usage_metrics = (known after apply)
+      [32m+[0m[0m id                                   = (known after apply)
+      [32m+[0m[0m instance_tenancy                     = "default"
+      [32m+[0m[0m ipv6_association_id                  = (known after apply)
+      [32m+[0m[0m ipv6_cidr_block                      = (known after apply)
+      [32m+[0m[0m ipv6_cidr_block_network_border_group = (known after apply)
+      [32m+[0m[0m main_route_table_id                  = (known after apply)
+      [32m+[0m[0m owner_id                             = (known after apply)
+      [32m+[0m[0m tags                                 = {
+          [32m+[0m[0m "Name" = "tkt-dev-vpc"
+        }
+      [32m+[0m[0m tags_all                             = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-vpc"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+    }
+
+[1m  # aws_vpc_endpoint.interface["ecr_api"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_endpoint" "interface" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m cidr_blocks           = (known after apply)
+      [32m+[0m[0m dns_entry             = (known after apply)
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m ip_address_type       = (known after apply)
+      [32m+[0m[0m network_interface_ids = (known after apply)
+      [32m+[0m[0m owner_id              = (known after apply)
+      [32m+[0m[0m policy                = (known after apply)
+      [32m+[0m[0m prefix_list_id        = (known after apply)
+      [32m+[0m[0m private_dns_enabled   = true
+      [32m+[0m[0m requester_managed     = (known after apply)
+      [32m+[0m[0m route_table_ids       = (known after apply)
+      [32m+[0m[0m security_group_ids    = (known after apply)
+      [32m+[0m[0m service_name          = "com.amazonaws.us-east-1.ecr.api"
+      [32m+[0m[0m service_region        = (known after apply)
+      [32m+[0m[0m state                 = (known after apply)
+      [32m+[0m[0m subnet_ids            = (known after apply)
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-ecr_api-endpoint"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ecr_api-endpoint"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_endpoint_type     = "Interface"
+      [32m+[0m[0m vpc_id                = (known after apply)
+
+      [32m+[0m[0m dns_options (known after apply)
+
+      [32m+[0m[0m subnet_configuration (known after apply)
+    }
+
+[1m  # aws_vpc_endpoint.interface["ecr_dkr"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_endpoint" "interface" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m cidr_blocks           = (known after apply)
+      [32m+[0m[0m dns_entry             = (known after apply)
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m ip_address_type       = (known after apply)
+      [32m+[0m[0m network_interface_ids = (known after apply)
+      [32m+[0m[0m owner_id              = (known after apply)
+      [32m+[0m[0m policy                = (known after apply)
+      [32m+[0m[0m prefix_list_id        = (known after apply)
+      [32m+[0m[0m private_dns_enabled   = true
+      [32m+[0m[0m requester_managed     = (known after apply)
+      [32m+[0m[0m route_table_ids       = (known after apply)
+      [32m+[0m[0m security_group_ids    = (known after apply)
+      [32m+[0m[0m service_name          = "com.amazonaws.us-east-1.ecr.dkr"
+      [32m+[0m[0m service_region        = (known after apply)
+      [32m+[0m[0m state                 = (known after apply)
+      [32m+[0m[0m subnet_ids            = (known after apply)
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-ecr_dkr-endpoint"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ecr_dkr-endpoint"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_endpoint_type     = "Interface"
+      [32m+[0m[0m vpc_id                = (known after apply)
+
+      [32m+[0m[0m dns_options (known after apply)
+
+      [32m+[0m[0m subnet_configuration (known after apply)
+    }
+
+[1m  # aws_vpc_endpoint.interface["logs"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_endpoint" "interface" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m cidr_blocks           = (known after apply)
+      [32m+[0m[0m dns_entry             = (known after apply)
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m ip_address_type       = (known after apply)
+      [32m+[0m[0m network_interface_ids = (known after apply)
+      [32m+[0m[0m owner_id              = (known after apply)
+      [32m+[0m[0m policy                = (known after apply)
+      [32m+[0m[0m prefix_list_id        = (known after apply)
+      [32m+[0m[0m private_dns_enabled   = true
+      [32m+[0m[0m requester_managed     = (known after apply)
+      [32m+[0m[0m route_table_ids       = (known after apply)
+      [32m+[0m[0m security_group_ids    = (known after apply)
+      [32m+[0m[0m service_name          = "com.amazonaws.us-east-1.logs"
+      [32m+[0m[0m service_region        = (known after apply)
+      [32m+[0m[0m state                 = (known after apply)
+      [32m+[0m[0m subnet_ids            = (known after apply)
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-logs-endpoint"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-logs-endpoint"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_endpoint_type     = "Interface"
+      [32m+[0m[0m vpc_id                = (known after apply)
+
+      [32m+[0m[0m dns_options (known after apply)
+
+      [32m+[0m[0m subnet_configuration (known after apply)
+    }
+
+[1m  # aws_vpc_endpoint.interface["secretsmanager"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_endpoint" "interface" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m cidr_blocks           = (known after apply)
+      [32m+[0m[0m dns_entry             = (known after apply)
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m ip_address_type       = (known after apply)
+      [32m+[0m[0m network_interface_ids = (known after apply)
+      [32m+[0m[0m owner_id              = (known after apply)
+      [32m+[0m[0m policy                = (known after apply)
+      [32m+[0m[0m prefix_list_id        = (known after apply)
+      [32m+[0m[0m private_dns_enabled   = true
+      [32m+[0m[0m requester_managed     = (known after apply)
+      [32m+[0m[0m route_table_ids       = (known after apply)
+      [32m+[0m[0m security_group_ids    = (known after apply)
+      [32m+[0m[0m service_name          = "com.amazonaws.us-east-1.secretsmanager"
+      [32m+[0m[0m service_region        = (known after apply)
+      [32m+[0m[0m state                 = (known after apply)
+      [32m+[0m[0m subnet_ids            = (known after apply)
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-secretsmanager-endpoint"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-secretsmanager-endpoint"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_endpoint_type     = "Interface"
+      [32m+[0m[0m vpc_id                = (known after apply)
+
+      [32m+[0m[0m dns_options (known after apply)
+
+      [32m+[0m[0m subnet_configuration (known after apply)
+    }
+
+[1m  # aws_vpc_endpoint.interface["ssm"][0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_endpoint" "interface" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m cidr_blocks           = (known after apply)
+      [32m+[0m[0m dns_entry             = (known after apply)
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m ip_address_type       = (known after apply)
+      [32m+[0m[0m network_interface_ids = (known after apply)
+      [32m+[0m[0m owner_id              = (known after apply)
+      [32m+[0m[0m policy                = (known after apply)
+      [32m+[0m[0m prefix_list_id        = (known after apply)
+      [32m+[0m[0m private_dns_enabled   = true
+      [32m+[0m[0m requester_managed     = (known after apply)
+      [32m+[0m[0m route_table_ids       = (known after apply)
+      [32m+[0m[0m security_group_ids    = (known after apply)
+      [32m+[0m[0m service_name          = "com.amazonaws.us-east-1.ssm"
+      [32m+[0m[0m service_region        = (known after apply)
+      [32m+[0m[0m state                 = (known after apply)
+      [32m+[0m[0m subnet_ids            = (known after apply)
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-ssm-endpoint"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-ssm-endpoint"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_endpoint_type     = "Interface"
+      [32m+[0m[0m vpc_id                = (known after apply)
+
+      [32m+[0m[0m dns_options (known after apply)
+
+      [32m+[0m[0m subnet_configuration (known after apply)
+    }
+
+[1m  # aws_vpc_endpoint.s3[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_endpoint" "s3" {
+      [32m+[0m[0m arn                   = (known after apply)
+      [32m+[0m[0m cidr_blocks           = (known after apply)
+      [32m+[0m[0m dns_entry             = (known after apply)
+      [32m+[0m[0m id                    = (known after apply)
+      [32m+[0m[0m ip_address_type       = (known after apply)
+      [32m+[0m[0m network_interface_ids = (known after apply)
+      [32m+[0m[0m owner_id              = (known after apply)
+      [32m+[0m[0m policy                = (known after apply)
+      [32m+[0m[0m prefix_list_id        = (known after apply)
+      [32m+[0m[0m private_dns_enabled   = (known after apply)
+      [32m+[0m[0m requester_managed     = (known after apply)
+      [32m+[0m[0m route_table_ids       = (known after apply)
+      [32m+[0m[0m security_group_ids    = (known after apply)
+      [32m+[0m[0m service_name          = "com.amazonaws.us-east-1.s3"
+      [32m+[0m[0m service_region        = (known after apply)
+      [32m+[0m[0m state                 = (known after apply)
+      [32m+[0m[0m subnet_ids            = (known after apply)
+      [32m+[0m[0m tags                  = {
+          [32m+[0m[0m "Name" = "tkt-dev-s3-endpoint"
+        }
+      [32m+[0m[0m tags_all              = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Name"        = "tkt-dev-s3-endpoint"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m vpc_endpoint_type     = "Gateway"
+      [32m+[0m[0m vpc_id                = (known after apply)
+
+      [32m+[0m[0m dns_options (known after apply)
+
+      [32m+[0m[0m subnet_configuration (known after apply)
+    }
+
+[1m  # aws_vpc_security_group_egress_rule.alb_to_ecs[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "alb_to_ecs" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To ECS tasks"
+      [32m+[0m[0m from_port                    = 8080
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                      = 8080
+    }
+
+[1m  # aws_vpc_security_group_egress_rule.ecs_to_rds[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "ecs_to_rds" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To the database"
+      [32m+[0m[0m from_port                    = 5432
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                      = 5432
+    }
+
+[1m  # aws_vpc_security_group_egress_rule.ecs_to_s3_gateway[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "ecs_to_s3_gateway" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m description            = "To the S3 gateway endpoint (ECR image layers live in S3)"
+      [32m+[0m[0m from_port              = 443
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m prefix_list_id         = "pl-63a5400a"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                = 443
+    }
+
+[1m  # aws_vpc_security_group_egress_rule.ecs_to_vpce[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_egress_rule" "ecs_to_vpce" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "To VPC interface endpoints"
+      [32m+[0m[0m from_port                    = 443
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                      = 443
+    }
+
+[1m  # aws_vpc_security_group_ingress_rule.alb_http_in[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "alb_http_in" {
+      [32m+[0m[0m arn                    = (known after apply)
+      [32m+[0m[0m cidr_ipv4              = "0.0.0.0/0"
+      [32m+[0m[0m description            = "HTTP from the internet"
+      [32m+[0m[0m from_port              = 80
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m ip_protocol            = "tcp"
+      [32m+[0m[0m security_group_id      = (known after apply)
+      [32m+[0m[0m security_group_rule_id = (known after apply)
+      [32m+[0m[0m tags_all               = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                = 80
+    }
+
+[1m  # aws_vpc_security_group_ingress_rule.ecs_from_alb[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "ecs_from_alb" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From the ALB only"
+      [32m+[0m[0m from_port                    = 8080
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                      = 8080
+    }
+
+[1m  # aws_vpc_security_group_ingress_rule.rds_from_ecs[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "rds_from_ecs" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "From ECS tasks only"
+      [32m+[0m[0m from_port                    = 5432
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                      = 5432
+    }
+
+[1m  # aws_vpc_security_group_ingress_rule.vpce_from_ecs[0m will be created
+[0m  [32m+[0m[0m resource "aws_vpc_security_group_ingress_rule" "vpce_from_ecs" {
+      [32m+[0m[0m arn                          = (known after apply)
+      [32m+[0m[0m description                  = "HTTPS from ECS tasks"
+      [32m+[0m[0m from_port                    = 443
+      [32m+[0m[0m id                           = (known after apply)
+      [32m+[0m[0m ip_protocol                  = "tcp"
+      [32m+[0m[0m referenced_security_group_id = (known after apply)
+      [32m+[0m[0m security_group_id            = (known after apply)
+      [32m+[0m[0m security_group_rule_id       = (known after apply)
+      [32m+[0m[0m tags_all                     = {
+          [32m+[0m[0m "CostCenter"  = "ticketdesk-poc"
+          [32m+[0m[0m "Environment" = "dev"
+          [32m+[0m[0m "Owner"       = "bhumeera"
+          [32m+[0m[0m "Project"     = "TicketDesk"
+        }
+      [32m+[0m[0m to_port                      = 443
+    }
+
+[1m  # random_password.db[0m will be created
+[0m  [32m+[0m[0m resource "random_password" "db" {
+      [32m+[0m[0m bcrypt_hash = (sensitive value)
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m length      = 24
+      [32m+[0m[0m lower       = true
+      [32m+[0m[0m min_lower   = 0
+      [32m+[0m[0m min_numeric = 0
+      [32m+[0m[0m min_special = 0
+      [32m+[0m[0m min_upper   = 0
+      [32m+[0m[0m number      = true
+      [32m+[0m[0m numeric     = true
+      [32m+[0m[0m result      = (sensitive value)
+      [32m+[0m[0m special     = false
+      [32m+[0m[0m upper       = true
+    }
+
+[1m  # random_password.jwt_secret[0m will be created
+[0m  [32m+[0m[0m resource "random_password" "jwt_secret" {
+      [32m+[0m[0m bcrypt_hash = (sensitive value)
+      [32m+[0m[0m id          = (known after apply)
+      [32m+[0m[0m length      = 64
+      [32m+[0m[0m lower       = true
+      [32m+[0m[0m min_lower   = 0
+      [32m+[0m[0m min_numeric = 0
+      [32m+[0m[0m min_special = 0
+      [32m+[0m[0m min_upper   = 0
+      [32m+[0m[0m number      = true
+      [32m+[0m[0m numeric     = true
+      [32m+[0m[0m result      = (sensitive value)
+      [32m+[0m[0m special     = true
+      [32m+[0m[0m upper       = true
+    }
+
+[1mPlan:[0m [0m90 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  [32m+[0m[0m alb_dns_name                        = (known after apply)
+  [32m+[0m[0m attachments_bucket                  = (known after apply)
+  [32m+[0m[0m aws_region                          = "us-east-1"
+  [32m+[0m[0m cloudwatch_dashboard_url            = "https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=tkt-dev-ticketdesk"
+  [32m+[0m[0m cloudwatch_log_group                = "/ecs/tkt-dev-ticketdesk"
+  [32m+[0m[0m db_endpoint                         = (sensitive value)
+  [32m+[0m[0m ecr_repository_url                  = (known after apply)
+  [32m+[0m[0m ecs_cluster_name                    = "tkt-dev-cluster"
+  [32m+[0m[0m ecs_service_name                    = "tkt-dev-ticketdesk-svc"
+  [32m+[0m[0m environment                         = "dev"
+  [32m+[0m[0m frontend_bucket                     = (known after apply)
+  [32m+[0m[0m frontend_url                        = (known after apply)
+  [32m+[0m[0m github_actions_access_key_id        = (sensitive value)
+  [32m+[0m[0m github_actions_role_arn             = (known after apply)
+  [32m+[0m[0m github_actions_secret_access_key    = (sensitive value)
+  [32m+[0m[0m lambda_thumbnail_ecr_repository_url = (known after apply)
+  [32m+[0m[0m lambda_thumbnail_function_name      = "tkt-dev-thumbnail"
+  [32m+[0m[0m sns_alerts_topic_arn                = (known after apply)
+  [32m+[0m[0m target_group_arn                    = (known after apply)
+  [32m+[0m[0m vpc_id                              = (known after apply)
+[0m[1mrandom_password.db: Creating...[0m[0m
+[0m[1mrandom_password.jwt_secret: Creating...[0m[0m
+[0m[1mrandom_password.jwt_secret: Creation complete after 0s [id=none][0m
+[0m[1mrandom_password.db: Creation complete after 0s [id=none][0m
+[0m[1maws_iam_openid_connect_provider.github_actions: Creating...[0m[0m
+[0m[1maws_cloudwatch_log_group.app: Creating...[0m[0m
+[0m[1maws_secretsmanager_secret.jwt_secret: Creating...[0m[0m
+[0m[1maws_iam_user.github_actions_deploy: Creating...[0m[0m
+[0m[1maws_ecr_repository.app: Creating...[0m[0m
+[0m[1maws_vpc.main: Creating...[0m[0m
+[0m[1maws_sns_topic.alerts: Creating...[0m[0m
+[0m[1maws_iam_role.task: Creating...[0m[0m
+[0m[1maws_cloudwatch_log_group.lambda_thumbnail: Creating...[0m[0m
+[0m[1maws_ssm_parameter.db_name: Creating...[0m[0m
+[0m[1maws_iam_openid_connect_provider.github_actions: Creation complete after 2s [id=arn:aws:iam::135274608372:oidc-provider/token.actions.githubusercontent.com][0m
+[0m[1maws_s3_bucket.attachments: Creating...[0m[0m
+[0m[1maws_iam_user.github_actions_deploy: Creation complete after 2s [id=tkt-dev-github-actions-deploy][0m
+[0m[1maws_ecr_repository.lambda_thumbnail: Creating...[0m[0m
+[0m[1maws_cloudwatch_log_group.lambda_thumbnail: Creation complete after 3s [id=/aws/lambda/tkt-dev-thumbnail][0m
+[0m[1maws_secretsmanager_secret.jwt_secret: Creation complete after 3s [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/jwt-secret-HFm1YN][0m
+[0m[1maws_iam_role.lambda_thumbnail: Creating...[0m[0m
+[0m[1maws_ecs_cluster.main: Creating...[0m[0m
+[0m[1maws_iam_role.task: Creation complete after 3s [id=tkt-dev-ecs-task-role][0m
+[0m[1maws_iam_role.execution: Creating...[0m[0m
+[0m[1maws_ssm_parameter.db_name: Creation complete after 3s [id=/tkt-dev/db/name][0m
+[0m[1maws_cloudwatch_log_group.app: Creation complete after 3s [id=/ecs/tkt-dev-ticketdesk][0m
+[0m[1maws_secretsmanager_secret.db_password: Creating...[0m[0m
+[0m[1maws_s3_bucket.frontend: Creating...[0m[0m
+[0m[1maws_ecr_repository.app: Creation complete after 4s [id=tkt-dev-ticketdesk][0m
+[0m[1maws_ssm_parameter.db_user: Creating...[0m[0m
+[0m[1maws_ecr_repository.lambda_thumbnail: Creation complete after 4s [id=tkt-dev-thumbnail-lambda][0m
+[0m[1mdata.aws_iam_policy_document.github_actions_assume: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.github_actions_assume: Read complete after 0s [id=2882689332][0m
+[0m[1maws_iam_access_key.github_actions_deploy: Creating...[0m[0m
+[0m[1maws_iam_role.lambda_thumbnail: Creation complete after 4s [id=tkt-dev-thumbnail-lambda-role][0m
+[0m[1maws_secretsmanager_secret_version.jwt_secret: Creating...[0m[0m
+[0m[1maws_iam_access_key.github_actions_deploy: Creation complete after 1s [id=[REDACTED-ACCESS-KEY-ID]][0m
+[0m[1maws_iam_role.github_actions_deploy: Creating...[0m[0m
+[0m[1maws_iam_role.execution: Creation complete after 4s [id=tkt-dev-ecs-execution-role][0m
+[0m[1maws_iam_role_policy_attachment.execution_managed: Creating...[0m[0m
+[0m[1maws_secretsmanager_secret.db_password: Creation complete after 5s [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/db-password-9m4ig1][0m
+[0m[1maws_sns_topic.alerts: Creation complete after 8s [id=arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts][0m
+[0m[1maws_secretsmanager_secret_version.db_password: Creating...[0m[0m
+[0m[1maws_sns_topic_subscription.alerts_email[0]: Creating...[0m[0m
+[0m[1maws_ssm_parameter.db_user: Creation complete after 4s [id=/tkt-dev/db/username][0m
+[0m[1maws_iam_role_policy_attachment.execution_managed: Creation complete after 2s [id=tkt-dev-ecs-execution-role-20260814093913168900000005][0m
+[0m[1maws_sns_topic_subscription.alerts_email[0]: Creation complete after 1s [id=arn:aws:sns:us-east-1:135274608372:tkt-dev-alerts:76a098c6-d828-41f7-bb29-d2ddfa2a69cb][0m
+[0m[1maws_secretsmanager_secret_version.jwt_secret: Creation complete after 3s [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/jwt-secret-HFm1YN|terraform-20260814093911817500000003][0m
+[0m[1maws_vpc.main: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_iam_role.github_actions_deploy: Creation complete after 5s [id=tkt-dev-github-actions-deploy][0m
+[0m[1maws_secretsmanager_secret_version.db_password: Creation complete after 4s [id=arn:aws:secretsmanager:us-east-1:135274608372:secret:tkt-dev/db-password-9m4ig1|terraform-20260814093912510800000004][0m
+[0m[1maws_s3_bucket.attachments: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_ecs_cluster.main: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_s3_bucket.frontend: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_s3_bucket.attachments: Creation complete after 16s [id=tkt-dev-attachments][0m
+[0m[1mdata.aws_iam_policy_document.task_attachments: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.lambda_thumbnail_permissions: Reading...[0m[0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.attachments: Creating...[0m[0m
+[0m[1maws_s3_bucket_versioning.attachments: Creating...[0m[0m
+[0m[1maws_s3_bucket_public_access_block.attachments: Creating...[0m[0m
+[0m[1mdata.aws_iam_policy_document.task_attachments: Read complete after 0s [id=1639559180][0m
+[0m[1maws_ssm_parameter.attachments_bucket: Creating...[0m[0m
+[0m[1mdata.aws_iam_policy_document.lambda_thumbnail_permissions: Read complete after 0s [id=4100854975][0m
+[0m[1maws_iam_role_policy.task_attachments: Creating...[0m[0m
+[0m[1maws_iam_role_policy.lambda_thumbnail: Creating...[0m[0m
+[0m[1maws_s3_bucket.frontend: Creation complete after 15s [id=tkt-dev-frontend][0m
+[0m[1mdata.aws_iam_policy_document.frontend_bucket: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.frontend_bucket: Read complete after 0s [id=2726293701][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.frontend: Creating...[0m[0m
+[0m[1maws_s3_bucket_website_configuration.frontend: Creating...[0m[0m
+[0m[1maws_ecs_cluster.main: Creation complete after 16s [id=arn:aws:ecs:us-east-1:135274608372:cluster/tkt-dev-cluster][0m
+[0m[1maws_vpc.main: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_vpc.main: Creation complete after 22s [id=vpc-01fe6dad7da67901a][0m
+[0m[1maws_iam_role_policy.task_attachments: Creation complete after 4s [id=tkt-dev-ecs-task-role:tkt-dev-ecs-task-attachments][0m
+[0m[1maws_iam_role_policy.lambda_thumbnail: Creation complete after 4s [id=tkt-dev-thumbnail-lambda-role:tkt-dev-thumbnail-lambda-policy][0m
+[0m[1maws_ssm_parameter.attachments_bucket: Creation complete after 4s [id=/tkt-dev/app/attachments-bucket][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.attachments: Creation complete after 4s [id=tkt-dev-attachments][0m
+[0m[1maws_s3_bucket_versioning.attachments: Creation complete after 4s [id=tkt-dev-attachments][0m
+[0m[1maws_s3_bucket_website_configuration.frontend: Creation complete after 4s [id=tkt-dev-frontend][0m
+[0m[1maws_s3_bucket_server_side_encryption_configuration.frontend: Creation complete after 4s [id=tkt-dev-frontend][0m
+[0m[1maws_s3_bucket_public_access_block.attachments: Creation complete after 4s [id=tkt-dev-attachments][0m
+[0m[1maws_route_table.private: Creating...[0m[0m
+[0m[1maws_s3_bucket_public_access_block.frontend: Creating...[0m[0m
+[0m[1maws_subnet.private[0]: Creating...[0m[0m
+[0m[1maws_security_group.rds: Creating...[0m[0m
+[0m[1maws_s3_object.frontend_files["styles.css"]: Creating...[0m[0m
+[0m[1maws_s3_object.frontend_files["app.js"]: Creating...[0m[0m
+[0m[1maws_s3_object.frontend_files["index.html"]: Creating...[0m[0m
+[0m[1maws_security_group.ecs_task: Creating...[0m[0m
+[0m[1maws_security_group.alb: Creating...[0m[0m
+[0m[1maws_lb_target_group.app: Creating...[0m[0m
+[0m[1maws_s3_bucket_public_access_block.frontend: Creation complete after 2s [id=tkt-dev-frontend][0m
+[0m[1maws_internet_gateway.main: Creating...[0m[0m
+[0m[1maws_s3_object.frontend_files["index.html"]: Creation complete after 2s [id=index.html][0m
+[0m[1maws_security_group.vpc_endpoints: Creating...[0m[0m
+[0m[1maws_s3_object.frontend_files["styles.css"]: Creation complete after 2s [id=styles.css][0m
+[0m[1maws_subnet.public[1]: Creating...[0m[0m
+[0m[1maws_s3_object.frontend_files["app.js"]: Creation complete after 3s [id=app.js][0m
+[0m[1maws_subnet.private[1]: Creating...[0m[0m
+[0m[1maws_subnet.private[0]: Creation complete after 3s [id=subnet-0a35bc71ab81accce][0m
+[0m[1maws_subnet.public[0]: Creating...[0m[0m
+[0m[1maws_route_table.private: Creation complete after 4s [id=rtb-084c3221389f731cf][0m
+[0m[1maws_lambda_function.thumbnail: Creating...[0m[0m
+[0m[1maws_internet_gateway.main: Creation complete after 2s [id=igw-0082e6a3414a767c3][0m
+[0m[1maws_ssm_parameter.cors_origins: Creating...[0m[0m
+[0m[1maws_subnet.private[1]: Creation complete after 2s [id=subnet-022b67b93e6f84308][0m
+[0m[1maws_s3_bucket_policy.frontend: Creating...[0m[0m
+[0m[1maws_s3_bucket_cors_configuration.attachments: Creating...[0m[0m
+[0m[1maws_ssm_parameter.cors_origins: Creation complete after 2s [id=/tkt-dev/app/cors-origins][0m
+[0m[1maws_vpc_endpoint.s3: Creating...[0m[0m
+[0m[1maws_lb_target_group.app: Creation complete after 6s [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:targetgroup/tkt-dev-tg/4db0d0bb6e8e4c43][0m
+[0m[1maws_route_table.public: Creating...[0m[0m
+[0m[1maws_s3_bucket_policy.frontend: Creation complete after 1s [id=tkt-dev-frontend][0m
+[0m[1maws_s3_bucket_cors_configuration.attachments: Creation complete after 1s [id=tkt-dev-attachments][0m
+[0m[1maws_route_table_association.private[0]: Creating...[0m[0m
+[0m[1maws_db_subnet_group.main: Creating...[0m[0m
+[0m[1maws_security_group.vpc_endpoints: Creation complete after 5s [id=sg-00d466111518e4d81][0m
+[0m[1maws_security_group.ecs_task: Creation complete after 7s [id=sg-0c30748834a38dac1][0m
+[0m[1maws_security_group.alb: Creation complete after 7s [id=sg-0058b68ce948fb2ff][0m
+[0m[1maws_route_table_association.private[1]: Creating...[0m[0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_s3_gateway: Creating...[0m[0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_vpce: Creating...[0m[0m
+[0m[1maws_security_group.rds: Creation complete after 7s [id=sg-0135e84b1443a5544][0m
+[0m[1maws_vpc_security_group_ingress_rule.alb_http_in: Creating...[0m[0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_s3_gateway: Creation complete after 1s [id=sgr-02b61673ca144f52f][0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Creating...[0m[0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_vpce: Creation complete after 1s [id=sgr-01b930c43c96a3712][0m
+[0m[1maws_vpc_security_group_ingress_rule.ecs_from_alb: Creating...[0m[0m
+[0m[1maws_route_table_association.private[0]: Creation complete after 2s [id=rtbassoc-0ea8b4562dac1dd38][0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Creating...[0m[0m
+[0m[1maws_vpc_security_group_ingress_rule.alb_http_in: Creation complete after 1s [id=sgr-05833a95483fd68ee][0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Creating...[0m[0m
+[0m[1maws_route_table_association.private[1]: Creation complete after 1s [id=rtbassoc-0a0327bf7b22447d7][0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Creating...[0m[0m
+[0m[1maws_vpc_security_group_ingress_rule.ecs_from_alb: Creation complete after 0s [id=sgr-09d2a1fdf6b46a8f1][0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Creating...[0m[0m
+[0m[1maws_route_table.public: Creation complete after 3s [id=rtb-0ff0802ce9dcae1cd][0m
+[0m[1maws_vpc_security_group_egress_rule.alb_to_ecs: Creating...[0m[0m
+[0m[1maws_db_subnet_group.main: Creation complete after 4s [id=tkt-dev-db-subnets][0m
+[0m[1maws_vpc_security_group_ingress_rule.vpce_from_ecs: Creating...[0m[0m
+[0m[1maws_vpc_security_group_egress_rule.alb_to_ecs: Creation complete after 1s [id=sgr-0c6c653249eccd370][0m
+[0m[1maws_vpc_security_group_ingress_rule.rds_from_ecs: Creating...[0m[0m
+[0m[1maws_vpc_security_group_ingress_rule.vpce_from_ecs: Creation complete after 0s [id=sgr-0a73d00473515c04b][0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_rds: Creating...[0m[0m
+[0m[1maws_vpc_security_group_ingress_rule.rds_from_ecs: Creation complete after 1s [id=sgr-048292125accbacfa][0m
+[0m[1maws_db_instance.main: Creating...[0m[0m
+[0m[1maws_vpc_security_group_egress_rule.ecs_to_rds: Creation complete after 1s [id=sgr-07a095af9a4bfc20c][0m
+[0m[1maws_subnet.public[1]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_subnet.public[0]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.s3: Creation complete after 8s [id=vpce-074186dceea9dc467][0m
+[0m[1maws_subnet.public[1]: Creation complete after 13s [id=subnet-07412458c26ce091f][0m
+[0m[1maws_subnet.public[0]: Creation complete after 13s [id=subnet-078f0c849754f1a93][0m
+[0m[1maws_route_table_association.public[0]: Creating...[0m[0m
+[0m[1maws_route_table_association.public[1]: Creating...[0m[0m
+[0m[1maws_lb.main: Creating...[0m[0m
+[0m[1maws_route_table_association.public[1]: Creation complete after 1s [id=rtbassoc-011359657c6ca17a8][0m
+[0m[1maws_route_table_association.public[0]: Creation complete after 1s [id=rtbassoc-0061df6d8a9e19352][0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [00m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [00m20s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_dkr"]: Creation complete after 35s [id=vpce-038a067f233ac184d][0m
+[0m[1maws_lb.main: Still creating... [00m30s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Still creating... [00m40s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ecr_api"]: Creation complete after 40s [id=vpce-049b02b21f4bc8ddd][0m
+[0m[1maws_vpc_endpoint.interface["logs"]: Creation complete after 40s [id=vpce-04478bb2ebf3390c3][0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Still creating... [00m40s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [00m40s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [00m40s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [00m40s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Still creating... [00m50s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [00m50s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [00m50s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [00m50s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Still creating... [01m00s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [01m00s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [01m00s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["ssm"]: Creation complete after 1m7s [id=vpce-072eec7e2d3fbffda][0m
+[0m[1maws_lb.main: Still creating... [01m00s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Still creating... [01m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [01m10s elapsed][0m[0m
+[0m[1maws_vpc_endpoint.interface["secretsmanager"]: Creation complete after 1m18s [id=vpce-04d212629d1fdfc62][0m
+[0m[1maws_lb.main: Still creating... [01m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [01m20s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [01m20s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [01m30s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [01m30s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [01m40s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [01m40s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [01m50s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [01m50s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [02m00s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [02m00s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [02m10s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [02m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [02m20s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [02m20s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [02m30s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [02m30s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [02m40s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [02m40s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [02m50s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [02m50s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [03m00s elapsed][0m[0m
+[0m[1maws_lb.main: Still creating... [03m00s elapsed][0m[0m
+[0m[1maws_lb.main: Creation complete after 3m1s [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:loadbalancer/app/tkt-dev-alb/74757fd80c50cbc9][0m
+[0m[1maws_s3_object.frontend_config: Creating...[0m[0m
+[0m[1maws_cloudwatch_metric_alarm.high_5xx: Creating...[0m[0m
+[0m[1maws_cloudwatch_metric_alarm.unhealthy_targets: Creating...[0m[0m
+[0m[1maws_lb_listener.http: Creating...[0m[0m
+[0m[1maws_db_instance.main: Still creating... [03m10s elapsed][0m[0m
+[0m[1maws_s3_object.frontend_config: Creation complete after 2s [id=config.js][0m
+[0m[1maws_lb_listener.http: Creation complete after 2s [id=arn:aws:elasticloadbalancing:us-east-1:135274608372:listener/app/tkt-dev-alb/74757fd80c50cbc9/04888220d72622b5][0m
+[0m[1maws_cloudwatch_metric_alarm.high_5xx: Creation complete after 3s [id=tkt-dev-high-5xx][0m
+[0m[1maws_cloudwatch_metric_alarm.unhealthy_targets: Creation complete after 3s [id=tkt-dev-unhealthy-targets][0m
+[0m[1maws_db_instance.main: Still creating... [03m20s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [03m30s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [03m40s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [03m50s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [04m00s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [04m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [04m20s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [04m30s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [04m40s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [04m50s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [05m00s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [05m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [05m20s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [05m30s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [05m40s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [05m50s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [06m00s elapsed][0m[0m
+[0m[1maws_db_instance.main: Still creating... [06m10s elapsed][0m[0m
+[0m[1maws_db_instance.main: Creation complete after 6m12s [id=db-42IUVRQIT7MAGJFR4TQV64SAGI][0m
+[0m[1maws_ssm_parameter.db_host: Creating...[0m[0m
+[0m[1maws_ssm_parameter.db_port: Creating...[0m[0m
+[0m[1maws_cloudwatch_metric_alarm.rds_high_cpu: Creating...[0m[0m
+[0m[1maws_cloudwatch_metric_alarm.rds_high_cpu: Creation complete after 3s [id=tkt-dev-rds-high-cpu][0m
+[0m[1maws_ssm_parameter.db_host: Creation complete after 3s [id=/tkt-dev/db/host][0m
+[0m[1maws_ssm_parameter.db_port: Creation complete after 3s [id=/tkt-dev/db/port][0m
+[0m[1mdata.aws_iam_policy_document.execution_secrets: Reading...[0m[0m
+[0m[1mdata.aws_iam_policy_document.execution_secrets: Read complete after 0s [id=651797212][0m
+[0m[1maws_iam_role_policy.execution_secrets: Creating...[0m[0m
+[0m[1maws_ecs_task_definition.app: Creating...[0m[0m
+[0m[1maws_ecs_task_definition.app: Creation complete after 2s [id=tkt-dev-ticketdesk][0m
+[0m[1maws_iam_role_policy.execution_secrets: Creation complete after 2s [id=tkt-dev-ecs-execution-role:tkt-dev-ecs-execution-secrets][0m
+[0m[1maws_ecs_service.app: Creating...[0m[0m
+[0m[1maws_ecs_service.app: Creation complete after 2s [id=arn:aws:ecs:us-east-1:135274608372:service/tkt-dev-cluster/tkt-dev-ticketdesk-svc][0m
+[0m[1maws_cloudwatch_dashboard.main: Creating...[0m[0m
+[0m[1maws_cloudwatch_dashboard.main: Creation complete after 1s [id=tkt-dev-ticketdesk][0m
+[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1mcreating Lambda Function (tkt-dev-thumbnail): operation error Lambda: CreateFunction, https response error StatusCode: 400, RequestID: 21cccfa1-0728-4000-a987-756e793f1a0a, InvalidParameterValueException: Source image 135274608372.dkr.ecr.us-east-1.amazonaws.com/tkt-dev-thumbnail-lambda:5b85950 does not exist. Provide a valid source image.[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m  with aws_lambda_function.thumbnail,
+[31m│[0m [0m  on lambda_thumbnail.tf line 78, in resource "aws_lambda_function" "thumbnail":
+[31m│[0m [0m  78: resource "aws_lambda_function" "thumbnail" [4m{[0m[0m
+[31m│[0m [0m
+[31m╵[0m[0m
+Releasing state lock. This may take a few moments...
+exit code: 1
+Finished at 2026-08-14T09:46:05Z
