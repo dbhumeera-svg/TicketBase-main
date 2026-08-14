@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      image: ${{ steps.image.outputs.image }}
+      image: ${{ steps.check-image.outputs.image }}
 
     steps:
       - name: Checkout repository
@@ -119,8 +119,29 @@ jobs:
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
+      # ECR has image-tag immutability on (by design - see infra), so
+      # "Re-run all jobs" on a past run re-pushing the same commit-SHA
+      # tag fails outright ("tag ... is immutable"), even though the
+      # image content would be identical. Skip the build/push when that
+      # tag is already present instead of failing - same fix already
+      # applied to build-and-deploy-lambda below.
+      - name: Check if image tag already exists in ECR
+        id: check-image
+        env:
+          REPO_URL: ${{ vars.ECR_REPOSITORY_URL }}
+        run: |
+          TAG="${GITHUB_SHA::7}"
+          REPO_NAME="${REPO_URL##*/}"
+          echo "image=$REPO_URL:$TAG" >> "$GITHUB_OUTPUT"
+          if aws ecr describe-images --repository-name "$REPO_NAME" --image-ids imageTag="$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build and push image (tagged with the commit SHA, never latest)
         id: image
+        if: steps.check-image.outputs.exists != 'true'
         env:
           REPO_URL: ${{ vars.ECR_REPOSITORY_URL }}
         run: |
